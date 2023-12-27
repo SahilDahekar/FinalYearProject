@@ -53,7 +53,7 @@ git clone https://github.com/<username>/FinalYearProject.git
 
 ## Tasks To do
 
- - [ ] Display Single User Stream with Screen Share , cam , mic controls.
+ - [x] Display Single User Stream with Screen Share , cam , mic controls.
  - [ ] Write Backend to Stream this to `Youtube` using backend ( use `websockets` and `ffmpeg` )
  - [ ] Create Landing and Dashboard Pages in Frontend
  - [ ] Add Auth Functionality Keeping in mind different API integration optimization ( `OAuth` , `Clerk` , `Custom using Jwt and cookies` )

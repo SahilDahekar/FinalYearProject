@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Video from '../../components/Video/Video.tsx';
-import Button from '../../components/Button/Button.tsx';
+import { Button } from '@/components/ui/button';
 
 const Home = () => {
   const userVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -99,13 +99,13 @@ const Home = () => {
         <Video styles={`w-[450px] h-[350px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
       </div>
       <div className='flex gap-2'>
-        <Button cb={toggleVideo}>
+        <Button onClick={toggleVideo}>
           {VIDEO_BUTTON_TEXT}
         </Button>
-        <Button cb={toggleAudio}>
+        <Button onClick={toggleAudio}>
           {MIC_BUTTON_TEXT}
         </Button>
-        <Button cb={toggleScreenShare}>
+        <Button onClick={toggleScreenShare}>
           {SCREEN_SHARE_BUTTON_TEXT}
         </Button>
       </div>

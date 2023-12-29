@@ -1,9 +1,9 @@
-import Home from './pages/Home/Home'
+import Landing from './pages/Landing/Landing'
 
 function App() {
   
   return (
-      <Home />
+    <Landing />
   )
 }
 

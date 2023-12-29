@@ -1,8 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
 import './index.css'
-import About from './pages/About/About.tsx'
+import App from './App.tsx'
+import About from './pages/About/About'
+import Home from './pages/Home/Home'
+import Login from './components/Login/Login.tsx'
+import Register from './components/Register/Register.tsx'
+import ErrorPage from './pages/ErrorPage/ErrorPage.tsx'
 import { RouterProvider , createBrowserRouter , createRoutesFromElements , Route } from 'react-router-dom'
 
 const router = createBrowserRouter(
@@ -10,12 +14,16 @@ const router = createBrowserRouter(
     <Route path='/'>
       <Route path='' element={<App/>}/>
       <Route path='about' element={<About/>}/>
+      <Route path='broadcast' element={<Home/>} />
+      <Route path='login' element={<Login/>}/>
+      <Route path='register' element={<Register/>}/>
+      <Route path='*' element={<ErrorPage/>}/>
     </Route>
   )
 );
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router}/>
   </React.StrictMode>,
 )

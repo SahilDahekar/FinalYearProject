@@ -1,6 +1,11 @@
 import React from 'react'
 
-const Button = ({cb , children}) => {
+type ButtonProps  = {
+  cb : () => void,
+  children: React.ReactNode
+}
+
+const Button = ({cb , children} : ButtonProps) => {
   return (
     <button className='px-4 py-2 bg-black text-white rounded-md font-semibold' onClick={cb}>
       {children}

@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Video from '../../components/Video/Video';
-import Button from '../../components/Button/Button';
+import Video from '../../components/Video/Video.tsx';
+import Button from '../../components/Button/Button.tsx';
 
 const Home = () => {
-  const userVideoRef = useRef(null);
-  const screenShareVideoRef = useRef(null);
-  const [userStream, setUserStream] = useState(null);
-  const [screenShareStream, setScreenShareStream] = useState(null);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [videoText , setVideoText] = useState(false);
-  const [micText, setMicText] = useState(false);
+  const userVideoRef = useRef<HTMLVideoElement | null>(null);
+  const screenShareVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [userStream, setUserStream] = useState<MediaStream | null>(null);
+  const [screenShareStream, setScreenShareStream] = useState<MediaStream | null>(null);
+  const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
+  const [videoText , setVideoText] = useState<boolean>(false);
+  const [micText, setMicText] = useState<boolean>(false);
 
-  const VIDEO_BUTTON_TEXT = videoText ? 'Start Video' : 'Stop Video';
-  const MIC_BUTTON_TEXT = micText ? 'Unmute Mic' : 'Mute Mic';
-  const SCREEN_SHARE_BUTTON_TEXT = isScreenSharing ? 'Stop Screen Share' : 'Start Screen Share';
+  const VIDEO_BUTTON_TEXT : string = videoText ? 'Start Video' : 'Stop Video';
+  const MIC_BUTTON_TEXT : string = micText ? 'Unmute Mic' : 'Mute Mic';
+  const SCREEN_SHARE_BUTTON_TEXT : string = isScreenSharing ? 'Stop Screen Share' : 'Start Screen Share';
 
   useEffect(() => {
     const startUserMediaStream = async () => {
@@ -24,7 +24,10 @@ const Home = () => {
         });
 
         setUserStream(userMediaStream);
-        userVideoRef.current.srcObject = userMediaStream;
+        const videoRefCurrent = userVideoRef.current;
+        if (videoRefCurrent) {
+          videoRefCurrent.srcObject = userMediaStream;
+        }
       } catch (error) {
         console.error('Error accessing user media:', error);
       }
@@ -72,14 +75,17 @@ const Home = () => {
         });
 
         setScreenShareStream(screenShareStream);
-        screenShareVideoRef.current.srcObject = screenShareStream;
+        const screenShareRef = screenShareVideoRef.current;
+        if (screenShareRef) {
+          screenShareRef.srcObject = screenShareStream;
+        }
         setIsScreenSharing(true);
       } catch (error) {
         console.error('Error accessing screen share:', error);
       }
     } else {
-      const tracks = screenShareStream.getTracks();
-      tracks.forEach((track) => track.stop());
+      const tracks = screenShareStream?.getTracks();
+      tracks?.forEach((track) => track.stop());
       setScreenShareStream(null);
       setIsScreenSharing(false);
     }

@@ -1,13 +1,13 @@
 
 type VideoProps = {
-  styles: string,
+  className: string,
   videoRef: React.Ref<HTMLVideoElement>
 }
 
-const Video = ({styles, videoRef} : VideoProps) => {
+const Video = ({className, videoRef} : VideoProps) => {
   return (
     <video
-      className={styles}
+      className={className}
       ref={videoRef}
       autoPlay
       playsInline

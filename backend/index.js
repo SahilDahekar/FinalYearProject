@@ -1,17 +1,14 @@
 import dotenv from "dotenv";
-import express from "express";
+import express from "express"
+import {connectToDatabase}from './db/connect.js'
 
 dotenv.config({
     path: "./.env"
 });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000
 
-app.get("/", (req, res) => {
-    res.send("Stream Sync Backend");
+app.listen(PORT,()=>{
+    console.log("server started")
 })
-
-app.listen(PORT, () => {
-    console.log(`Sever listening on port ${PORT}`);
-});

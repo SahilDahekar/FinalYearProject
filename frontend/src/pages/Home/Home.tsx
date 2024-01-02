@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Video from '../../components/Video/Video.tsx';
+import { useState, useEffect, useRef } from 'react';
+import Video from '@/components/Video/Video';
 import { Button } from '@/components/ui/button';
+import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa6";
+import { TbShare2 } from "react-icons/tb";
 
 const Home = () => {
   const userVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -11,16 +13,16 @@ const Home = () => {
   const [videoText , setVideoText] = useState<boolean>(false);
   const [micText, setMicText] = useState<boolean>(false);
 
-  const VIDEO_BUTTON_TEXT : string = videoText ? 'Start Video' : 'Stop Video';
-  const MIC_BUTTON_TEXT : string = micText ? 'Unmute Mic' : 'Mute Mic';
-  const SCREEN_SHARE_BUTTON_TEXT : string = isScreenSharing ? 'Stop Screen Share' : 'Start Screen Share';
+  const VIDEO_BUTTON_TEXT : JSX.Element = videoText ? <FaVideoSlash size='23'/> : <FaVideo size='20'/>;
+  const MIC_BUTTON_TEXT : JSX.Element = micText ? <FaMicrophoneSlash size='24'/> : <FaMicrophone size='20'/>;
+  const SCREEN_SHARE_BUTTON_TEXT : JSX.Element = <TbShare2 size='25'/>;
 
   useEffect(() => {
     const startUserMediaStream = async () => {
       try {
         const userMediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
-          audio: true,
+          audio: false,
         });
 
         setUserStream(userMediaStream);
@@ -92,20 +94,20 @@ const Home = () => {
   };
 
   return (
-    <div className='p-4 bg-slate-300'>
+    <div className='p-4 bg-secondary'>
       <h1 className='text-5xl font-bold '>StreamSync User Video Stream</h1>
       <div className='flex gap-3'>
-        <Video styles='w-[450px] h-[350px]' videoRef={userVideoRef} />
-        <Video styles={`w-[450px] h-[350px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+        <Video className='w-[450px] h-[350px]' videoRef={userVideoRef} />
+        <Video className={`w-[450px] h-[350px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
       </div>
       <div className='flex gap-2'>
-        <Button onClick={toggleVideo}>
-          {VIDEO_BUTTON_TEXT}
-        </Button>
-        <Button onClick={toggleAudio}>
+        <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>
           {MIC_BUTTON_TEXT}
         </Button>
-        <Button onClick={toggleScreenShare}>
+        <Button onClick={toggleVideo} className={`w-16 h-16 p-3 rounded-full ${videoText && ('bg-red-700 hover:bg-red-800')}`}>
+          {VIDEO_BUTTON_TEXT}
+        </Button>
+        <Button onClick={toggleScreenShare} className={`w-16 h-16 p-3 rounded-full ${isScreenSharing && ('bg-blue-500 hover:bg-blue-600')}`}>
           {SCREEN_SHARE_BUTTON_TEXT}
         </Button>
       </div>

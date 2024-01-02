@@ -94,22 +94,34 @@ const Home = () => {
   };
 
   return (
-    <div className='p-4 bg-secondary'>
-      <h1 className='text-5xl font-bold '>StreamSync User Video Stream</h1>
-      <div className='flex gap-3'>
-        <Video className='w-[450px] h-[350px]' videoRef={userVideoRef} />
-        <Video className={`w-[450px] h-[350px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+    <div className='flex'>
+      <div className='w-4/6 p-4 bg-secondary'>
+        <div className='flex gap-3'>
+          <Video className='w-[450px] h-[350px]' videoRef={userVideoRef} />
+          <Video className={`w-[450px] h-[350px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+        </div>
+        <div className='border border-lime-500 p-10'>
+          <p>Canvas Layouts go here</p>
+        </div>
+        <div className='flex gap-2'>
+          <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>
+            {MIC_BUTTON_TEXT}
+          </Button>
+          <Button onClick={toggleVideo} className={`w-16 h-16 p-3 rounded-full ${videoText && ('bg-red-700 hover:bg-red-800')}`}>
+            {VIDEO_BUTTON_TEXT}
+          </Button>
+          <Button onClick={toggleScreenShare} className={`w-16 h-16 p-3 rounded-full ${isScreenSharing && ('bg-blue-500 hover:bg-blue-600')}`}>
+            {SCREEN_SHARE_BUTTON_TEXT}
+          </Button>
+        </div>
       </div>
-      <div className='flex gap-2'>
-        <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>
-          {MIC_BUTTON_TEXT}
-        </Button>
-        <Button onClick={toggleVideo} className={`w-16 h-16 p-3 rounded-full ${videoText && ('bg-red-700 hover:bg-red-800')}`}>
-          {VIDEO_BUTTON_TEXT}
-        </Button>
-        <Button onClick={toggleScreenShare} className={`w-16 h-16 p-3 rounded-full ${isScreenSharing && ('bg-blue-500 hover:bg-blue-600')}`}>
-          {SCREEN_SHARE_BUTTON_TEXT}
-        </Button>
+      <div className='w-2/6 border border-green-600 text-center'>
+        <div className='border border-red-600'>
+          <Button>Go Live</Button>
+        </div>
+        <div className='border border-red-600'>
+          <p>Live Chat goes here</p>
+        </div>
       </div>
     </div>
   );

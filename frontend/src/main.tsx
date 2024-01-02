@@ -8,13 +8,26 @@ import Login from './components/Login/Login.tsx'
 import Register from './components/Register/Register.tsx'
 import ErrorPage from './pages/ErrorPage/ErrorPage.tsx'
 import { RouterProvider , createBrowserRouter , createRoutesFromElements , Route } from 'react-router-dom'
+import Dashboard from './pages/Dashboard/Dashboard.tsx'
+import Broadcast from './components/Broadcast/Broadcast.tsx'
+import Destination from './components/Destination/Destination.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/'>
       <Route path='' element={<App/>}/>
       <Route path='about' element={<About/>}/>
-      <Route path='broadcast' element={<Home/>} />
+      <Route element={<Dashboard />}>
+        <Route
+          path="broadcast"
+          element={<Broadcast />}
+        />
+        <Route 
+          path="destination" 
+          element={<Destination />}
+        />
+      </Route>
+      <Route path='studio/:studioId' element={<Home/>} />
       <Route path='login' element={<Login/>}/>
       <Route path='register' element={<Register/>}/>
       <Route path='*' element={<ErrorPage/>}/>

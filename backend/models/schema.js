@@ -33,7 +33,7 @@ const destinationSchema = new mongoose.Schema({
     facebook_long_access_token: { type: String }
 });
 
-const Destination = mongoose.model('Destination', userSchema);
+const Destination = mongoose.model('Destination', destinationSchema);
 
 
 /* ******************************************************************************************

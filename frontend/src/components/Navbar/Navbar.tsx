@@ -14,11 +14,11 @@ function Navbar() {
         },
         {
             name: 'Login',
-            link: '/login',
+            link: '/auth',
         },
         {
             name: 'Get Started',
-            link: '/register',
+            link: '/auth',
         }
     ];
   return (

@@ -4,13 +4,12 @@ import './index.css'
 import App from './App.tsx'
 import About from './pages/About/About'
 import Studio from './pages/Studio/Studio'
-import Login from './components/Login/Login.tsx'
-import Register from './components/Register/Register.tsx'
 import ErrorPage from './pages/ErrorPage/ErrorPage.tsx'
 import { RouterProvider , createBrowserRouter , createRoutesFromElements , Route } from 'react-router-dom'
 import Dashboard from './pages/Dashboard/Dashboard.tsx'
 import Broadcast from './components/Broadcast/Broadcast.tsx'
 import Destination from './components/Destination/Destination.tsx'
+import Auth from './pages/Auth/Auth.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,8 +27,7 @@ const router = createBrowserRouter(
         />
       </Route>
       <Route path='studio/:studioId' element={<Studio/>} />
-      <Route path='login' element={<Login/>}/>
-      <Route path='register' element={<Register/>}/>
+      <Route path='auth' element={<Auth/>}/>
       <Route path='*' element={<ErrorPage/>}/>
     </Route>
   )

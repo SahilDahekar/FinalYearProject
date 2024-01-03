@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa6";
 import { TbShare2 } from "react-icons/tb";
 
-const Home = () => {
+const Studio = () => {
   const userVideoRef = useRef<HTMLVideoElement | null>(null);
   const screenShareVideoRef = useRef<HTMLVideoElement | null>(null);
   const [userStream, setUserStream] = useState<MediaStream | null>(null);
@@ -127,5 +127,5 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Studio;
   

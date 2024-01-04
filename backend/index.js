@@ -1,6 +1,6 @@
 
 import app from './app.js'
-import { connectToDatabase } from './db/connnections.js'
+import { connectToDatabase } from './db/connections.js'
 
 connectToDatabase()
     .then(() => {

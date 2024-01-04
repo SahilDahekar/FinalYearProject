@@ -1,4 +1,3 @@
-import React from 'react'
 import ToogleCard from './ToogleCard';
 
 type Toggle = {
@@ -28,7 +27,7 @@ export default function Destination() {
         <h2 className='text-3xl font-semibold tracking-tight'>Add a Destination</h2>
         <div className='flex py-4 gap-3'>
             {cards.map((card) => {
-              return (<ToogleCard title={card.title} img={card.img}/>)
+              return (<ToogleCard key={card.title} title={card.title} img={card.img}/>)
             })}
         </div>
     </div>

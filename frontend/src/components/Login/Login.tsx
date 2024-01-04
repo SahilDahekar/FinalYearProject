@@ -1,7 +1,10 @@
+import { useState } from "react"
+import { useNavigate } from "react-router-dom";
+import api from "@/lib/api"
+import { Loader2 } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import api from "@/lib/api"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +27,9 @@ const formSchema = z.object({
 })
 
 function Login() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,14 +39,18 @@ function Login() {
   })
  
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     try{
       const response = await api.post('/user/login', {
         email: values.email,
         password: values.password
       });
       console.log(response.data);
+      setIsLoading(false);
+      navigate("/broadcast");
     } catch (err) {
-      console.log(`Error: ${(err as Error).message}`)
+      console.log(`Error: ${(err as Error).message}`);
+      setIsLoading(false);
     }
     console.log(values);
   }
@@ -75,7 +85,9 @@ function Login() {
               </FormItem>
             )}
           />
-          <Button type="submit">Login</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Login
+          </Button>
         </form>
       </Form>
     </div>

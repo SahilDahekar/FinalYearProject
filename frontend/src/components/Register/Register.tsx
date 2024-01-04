@@ -1,3 +1,7 @@
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import api from "@/lib/api"
+import { Loader2 } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -12,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import api from "@/lib/api"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -27,6 +30,9 @@ const formSchema = z.object({
 })
 
 function Register() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,6 +43,7 @@ function Register() {
   })
  
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     try{
       const response = await api.post('/user/signup', {
         name: values.name,
@@ -44,8 +51,11 @@ function Register() {
         password: values.password
       });
       console.log(response.data);
+      setIsLoading(false);
+      navigate("/broadcast");
     } catch (err) {
-      console.log(`Error: ${(err as Error).message}`)
+      console.log(`Error: ${(err as Error).message}`);
+      setIsLoading(false);
     }
     console.log(values);
   }
@@ -93,7 +103,9 @@ function Register() {
               </FormItem>
             )}
           />
-          <Button type="submit">Sign Up</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Sign Up
+          </Button>
         </form>
       </Form>
     </div>

@@ -20,6 +20,12 @@ export const usersignUp = async (req, res, next) => {
         const hashedPassword = await hash(password, 10);
         const existingUser = await User.findOne({ email });
 
+        //Uncomment these lines to simulate delay
+        // const sleep = ms => new Promise(
+        //     resolve => setTimeout(resolve, ms));
+        
+        // await sleep(5000);
+
         if (existingUser) {
             return res.status(401).send("user already registered");
         }
@@ -66,6 +72,12 @@ export const userLogin = async (req, res, next) => {
         const user = await User.findOne({
             email
         });
+
+        //Uncomment these lines to simulate delay
+        // const sleep = ms => new Promise(
+        //     resolve => setTimeout(resolve, ms));
+        
+        // await sleep(5000);
 
         if (!user) {
             return res.status(401).send("user not registered");

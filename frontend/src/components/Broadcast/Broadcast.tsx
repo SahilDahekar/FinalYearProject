@@ -17,7 +17,7 @@ function Broadcast() {
         <h2 className='text-3xl font-semibold tracking-tight'>Create a Broadcast</h2>
         
         <Dialog>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button variant={'secondary'} className='my-4'>
                 <GrNewWindow className='mr-2'/> New
             </Button>

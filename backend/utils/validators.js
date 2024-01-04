@@ -1,31 +1,29 @@
+import { z } from "zod";
 
-import { body, validationResult } from "express-validator"
+const loginValidator = z.object({
+  email: z.string().email().trim(),
+  password: z.string().min(6).trim(),
+});
 
-export const validate = (validations) => {
-    return async (req, res, next) => {
-        for (let validation of validations) {
-            const result = await validation.run(req);
-            if (!result.isEmpty()) break;
-        }
-        const errors = validationResult(req);
-        if (errors.isEmpty()) {
-            return next();
-        }
-        return res.status(422).json({ errors: errors.array() });
-    };
+const signupValidator = loginValidator.extend({
+  name: z.string().min(1),
+});
+
+const validate = (Schema) => {
+  return async (req, res, next) => {
+      console.log(req.body);
+      const validationResult = await Schema.safeParse(req.body);
+      if (validationResult.success === false) {
+        const errorMessages = validationResult.error.errors.map((error) => ({
+          field: error.path.join("."),
+          message: error.message,
+        }));
+    
+        return res.status(422).json({ errors: errorMessages });
+      }
+    
+      return next();
+  };
 };
 
-export const loginValidator = [
-    body('email').trim().isEmail().withMessage('Email is required'),
-    body('password')
-        .trim()
-        .isLength({ min: 6 })
-        .withMessage('Password should contain at least 6 characters'),
-];
-
-export const signupValidator = [
-    body('name').notEmpty().withMessage('Name is required'),
-    ...loginValidator,
-];
-
-
+export { loginValidator, signupValidator, validate };

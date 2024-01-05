@@ -6,7 +6,7 @@ const loginValidator = z.object({
 });
 
 const signupValidator = loginValidator.extend({
-  name: z.string().min(1),
+  name: z.string().min(2),
 });
 
 const validate = (Schema) => {

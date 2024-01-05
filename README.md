@@ -54,10 +54,10 @@ git clone https://github.com/<username>/FinalYearProject.git
 ## Tasks To do
 
  - [x] Display Single User Stream with Screen Share , cam , mic controls.
- - [ ] Write Backend to Stream this to `Youtube` using backend ( use `websockets` and `ffmpeg` )
+ - [x] Write Backend to Stream this to `Youtube` using backend ( use `websockets` and `ffmpeg` )
  - [x] Create Landing and Dashboard Pages in Frontend
  - [x] Add Auth Functionality Keeping in mind different API integration optimization ( `OAuth` , `Clerk` , `Custom using Jwt and cookies` )
- - [ ] Add Support for other Streming platforms ( `Twitch` , `Facebook Live` )
+ - [x] Add Support for other Streming platforms ( `Twitch` , `Facebook Live` )
  - [ ] Add Custom Layout Controls Functionality.
  - [ ] Add Support for Multi User Stream with a main Stream been admin host
  - [ ] Migrate to `NextJs` and containerize the project.

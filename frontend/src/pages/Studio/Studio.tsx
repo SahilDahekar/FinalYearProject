@@ -13,8 +13,10 @@ const Studio = () => {
   const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
   const [videoText , setVideoText] = useState<boolean>(false);
   const [micText, setMicText] = useState<boolean>(false);
+  const [live, setLive] = useState<boolean>(false);
   const VIDEO_BUTTON_TEXT : JSX.Element = videoText ? <FaVideoSlash size='23'/> : <FaVideo size='20'/>;
   const MIC_BUTTON_TEXT : JSX.Element = micText ? <FaMicrophoneSlash size='24'/> : <FaMicrophone size='20'/>;
+  const GO_LIVE_TEXT : string = live ? "End Live" : "Go Live";
   const SCREEN_SHARE_BUTTON_TEXT : JSX.Element = <TbShare2 size='25'/>;
   let socket = io('ws://localhost:5001', {
     transports: ['websocket'],
@@ -25,7 +27,7 @@ const Studio = () => {
       try {
         const userMediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
-          audio: false,
+          audio: true,
         });
 
         setUserStream(userMediaStream);
@@ -97,6 +99,7 @@ const Studio = () => {
   };
 
   const handleLive =()=>{
+    setLive(live => !live);
     if(socket == undefined){
       socket = io('ws://localhost:5001', {
         transports: ['websocket'],  
@@ -104,16 +107,18 @@ const Studio = () => {
     }
     console.log(socket);
     console.log(userStream);
-    socket.emit('Message',userStream.id,(response:any)=>{
-      console.log(response);
-    });
+    if(userStream){
+      socket.emit('Message',userStream.id,(response:any)=>{
+        console.log(response);
+      });
+    }
     recorderInit();
   };
-  const recorderInit = () => {
-    //@ts-ignore
-    let liveStream = (userVideoRef.current).captureStream(30);
 
-    let mediaRecorder = new MediaRecorder(liveStream!, {
+  const recorderInit = () => {
+    let liveStream = (userVideoRef.current as any).captureStream(30);
+
+    let mediaRecorder = new MediaRecorder(liveStream, {
       mimeType: 'video/webm;codecs=h264',
       videoBitsPerSecond: 3 * 1024 * 1024,
     });
@@ -151,7 +156,7 @@ const Studio = () => {
       </div>
       <div className='w-2/6 border border-green-600 text-center'>
         <div className='border border-red-600'>
-          <Button onClick={handleLive}>Go Live</Button>
+          <Button onClick={handleLive}>{GO_LIVE_TEXT}</Button>
         </div>
         <div className='border border-red-600'>
           <p>Live Chat goes here</p>

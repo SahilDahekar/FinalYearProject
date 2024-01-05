@@ -110,7 +110,8 @@ const Studio = () => {
     recorderInit();
   };
   const recorderInit = () => {
-    let liveStream = (userVideoRef.current as any).captureStream(30);
+    //@ts-ignore
+    let liveStream = (userVideoRef.current).captureStream(30);
 
     let mediaRecorder = new MediaRecorder(liveStream!, {
       mimeType: 'video/webm;codecs=h264',

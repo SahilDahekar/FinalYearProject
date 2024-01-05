@@ -3,6 +3,7 @@ import Video from '@/components/Video/Video';
 import { Button } from '@/components/ui/button';
 import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa6";
 import { TbShare2 } from "react-icons/tb";
+import io from 'socket.io-client';
 
 const Studio = () => {
   const userVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -12,11 +13,13 @@ const Studio = () => {
   const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
   const [videoText , setVideoText] = useState<boolean>(false);
   const [micText, setMicText] = useState<boolean>(false);
-
   const VIDEO_BUTTON_TEXT : JSX.Element = videoText ? <FaVideoSlash size='23'/> : <FaVideo size='20'/>;
   const MIC_BUTTON_TEXT : JSX.Element = micText ? <FaMicrophoneSlash size='24'/> : <FaMicrophone size='20'/>;
   const SCREEN_SHARE_BUTTON_TEXT : JSX.Element = <TbShare2 size='25'/>;
-
+  let socket = io('ws://localhost:5001', {
+    transports: ['websocket'],
+  });
+  
   useEffect(() => {
     const startUserMediaStream = async () => {
       try {
@@ -93,6 +96,37 @@ const Studio = () => {
     }
   };
 
+  const handleLive =()=>{
+    if(socket == undefined){
+      socket = io('ws://localhost:5001', {
+        transports: ['websocket'],  
+      });
+    }
+    console.log(socket);
+    console.log(userStream);
+    socket.emit('Message',userStream.id,(response:any)=>{
+      console.log(response);
+    });
+    recorderInit();
+  };
+  const recorderInit = () => {
+    //@ts-ignore
+    let liveStream = (userVideoRef.current).captureStream(30);
+
+    let mediaRecorder = new MediaRecorder(liveStream!, {
+      mimeType: 'video/webm;codecs=h264',
+      videoBitsPerSecond: 3 * 1024 * 1024,
+    });
+
+    console.log(mediaRecorder, mediaRecorder.ondataavailable);
+    mediaRecorder.ondataavailable = (e: any) => {
+      console.log('sending chunks', e.data, socket);
+      socket.send(e.data);
+    };
+    mediaRecorder.start(1000);
+  };
+
+
   return (
     <div className='flex'>
       <div className='w-4/6 p-4 bg-secondary'>
@@ -117,7 +151,7 @@ const Studio = () => {
       </div>
       <div className='w-2/6 border border-green-600 text-center'>
         <div className='border border-red-600'>
-          <Button>Go Live</Button>
+          <Button onClick={handleLive}>Go Live</Button>
         </div>
         <div className='border border-red-600'>
           <p>Live Chat goes here</p>

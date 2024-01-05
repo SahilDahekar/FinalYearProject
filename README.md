@@ -58,6 +58,7 @@ git clone https://github.com/<username>/FinalYearProject.git
  - [x] Create Landing and Dashboard Pages in Frontend
  - [x] Add Auth Functionality Keeping in mind different API integration optimization ( `OAuth` , `Clerk` , `Custom using Jwt and cookies` )
  - [x] Add Support for other Streming platforms ( `Twitch` , `Facebook Live` )
+ - [ ] Find alternatives for `MediaRecorder` to reduce lag ( current lag is `12 sec` when expected is `5 - 10 sec` on `Twitch` )
  - [ ] Add Custom Layout Controls Functionality.
  - [ ] Add Support for Multi User Stream with a main Stream been admin host
  - [ ] Migrate to `NextJs` and containerize the project.

@@ -32,7 +32,7 @@ const twitchSettings = (twitch) => {
 
       //'-filter_complex', 'aresample=44100', // resample audio to 44100Hz, needed if input is not 44100
       //'-strict', 'experimental',
-      '-bufsize',
+    '-bufsize',
       '1000',
       '-f',
       'flv',
@@ -158,8 +158,4 @@ const customRtmpSettings = (customRTMP) => {
   } else return []
 }
 
-module.exports.inputSettings = inputSettings
-module.exports.twitchSettings = twitchSettings
-module.exports.youtubeSettings = youtubeSettings
-module.exports.facebookSettings = facebookSettings
-module.exports.customRtmpSettings = customRtmpSettings
+export {inputSettings,twitchSettings,youtubeSettings,facebookSettings,customRtmpSettings};

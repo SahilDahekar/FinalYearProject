@@ -13,7 +13,6 @@ const Studio = () => {
   const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
   const [videoText , setVideoText] = useState<boolean>(false);
   const [micText, setMicText] = useState<boolean>(false);
-  
   const VIDEO_BUTTON_TEXT : JSX.Element = videoText ? <FaVideoSlash size='23'/> : <FaVideo size='20'/>;
   const MIC_BUTTON_TEXT : JSX.Element = micText ? <FaMicrophoneSlash size='24'/> : <FaMicrophone size='20'/>;
   const SCREEN_SHARE_BUTTON_TEXT : JSX.Element = <TbShare2 size='25'/>;
@@ -108,6 +107,22 @@ const Studio = () => {
     socket.emit('Message',userStream.id,(response:any)=>{
       console.log(response);
     });
+    recorderInit();
+  };
+  const recorderInit = () => {
+    let liveStream = (userVideoRef.current as any).captureStream(30);
+
+    let mediaRecorder = new MediaRecorder(liveStream!, {
+      mimeType: 'video/webm;codecs=h264',
+      videoBitsPerSecond: 3 * 1024 * 1024,
+    });
+
+    console.log(mediaRecorder, mediaRecorder.ondataavailable);
+    mediaRecorder.ondataavailable = (e: any) => {
+      console.log('sending chunks', e.data, socket);
+      socket.send(e.data);
+    };
+    mediaRecorder.start(1000);
   };
 
 

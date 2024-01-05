@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log(`Socket disconnected: ${socket.id}`);
       });
-  const twitch = "rtmp://live.twitch.tv/app/stream_key";
+  const twitch = `rtmp://live.twitch.tv/app/${process.env.TWITCH_STREAM_KEY}`;
   const ffmpegInput = inputSettings.concat(
     // youtubeSettings(youtubeDestinationUrl),
     twitchSettings(twitch)

@@ -8,10 +8,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { useAuth } from '@/context/AuthContext';
 
 
 
 function Broadcast() {
+  const auth = useAuth();
+  console.log(auth);
+
   return (
     <div className='p-6'>
         <h2 className='text-3xl font-semibold tracking-tight'>Create a Broadcast</h2>

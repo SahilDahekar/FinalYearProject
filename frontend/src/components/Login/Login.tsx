@@ -48,21 +48,21 @@ function Login() {
         const password = values.password;
         try {
           toast.loading("Signing In", { id: "login" });
-          await api.post("/user/login",{
-            email,password
-          })
+          await auth?.login(email, password);
+          setIsLoading(false);
           toast.success("Signed In Successfully", { id: "login" });
           navigate("/broadcast");
         } catch (error) {
           console.log(error);
+          setIsLoading(false);
           toast.error("Signing In Failed", { id: "login" });
         }
     }
     useEffect(()=>{
       if(auth?.user){
-        navigate("/broadcaste")
+        navigate("/broadcast")
       }
-    })
+    },[auth])
 
     return (
         <div>

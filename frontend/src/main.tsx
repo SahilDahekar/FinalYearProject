@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard/Dashboard.tsx'
 import Broadcast from './components/Broadcast/Broadcast.tsx'
 import Destination from './components/Destination/Destination.tsx'
 import Auth from './pages/Auth/Auth.tsx'
+import { AuthProvider } from './context/AuthContext.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +36,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
   </React.StrictMode>,
 )

@@ -4,7 +4,6 @@ import { Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import api from "@/lib/api";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {toast} from 'react-hot-toast';
-import { useAuth } from "@/context/AuthContext";
+// import { useAuth } from "@/context/AuthContext";
+import api from "@/lib/api";
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -31,8 +31,20 @@ const formSchema = z.object({
     }),
 });
 
+type User = {
+    name: string;
+    email: string;
+};
+type UserAuth = {
+    isLoggedIn: boolean;
+    user: User | null;
+    login: (email: string, password: string) => Promise<void>;
+    signup: (name: string, email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
+};
+
 function Register() {
-  const auth = useAuth()
+    // const { signup } = useAuth();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
 
@@ -52,20 +64,30 @@ function Register() {
         const password = values.password;
         try {
           toast.loading("Signing Up", { id: "signup" });
-          await api.post("http://localhost:8000/api/user/signup",{
+          await api.post("/user/signup",{
           name,email,password })
           toast.success("Signed Up Successfully", { id: "signup" });
         } catch (error) {
           console.log(error);
           toast.error("Signing Up Failed", { id: "signup" });
         }
+        // try {
+        //     toast.loading("Signing Up", { id: "signup" });
+        //     signup(name, email, password);
+        //     toast.success("Signed Up Successfully", { id: "signup" });
+        //     setIsLoading(false);
+        //   } catch (error) {
+        //     console.log(error);
+        //     toast.error("Signing Up Failed", { id: "signup" });
+        //     setIsLoading(false);
+        //   }
     };
 
-    useEffect(()=>{
-      if(auth?.user){
-        return navigate("/dashboard")
-      }
-    },[auth])
+    // useEffect(()=>{
+    //   if(auth?.user){
+    //     return navigate("/dashboard")
+    //   }
+    // },[auth])
 
 
 

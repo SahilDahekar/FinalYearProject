@@ -27,7 +27,7 @@ import {
   
   export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   
     useEffect(() => {
       // fetch if the user's cookies are valid then skip login

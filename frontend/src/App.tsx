@@ -1,9 +1,12 @@
+import { AuthProvider } from './context/AuthContext'
 import Landing from './pages/Landing/Landing'
 
 function App() {
   
   return (
-    <Landing />
+    <AuthProvider>
+      <Landing />
+    </AuthProvider>
   )
 }
 

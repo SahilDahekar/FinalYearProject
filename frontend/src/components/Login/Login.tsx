@@ -48,7 +48,7 @@ function Login() {
         const password = values.password;
         try {
           toast.loading("Signing In", { id: "login" });
-          await api.post("http://localhost:8000/api/user/login",{
+          await api.post("/user/login",{
             email,password
           })
           toast.success("Signed In Successfully", { id: "login" });

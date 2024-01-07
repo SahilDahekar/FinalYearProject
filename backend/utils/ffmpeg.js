@@ -14,8 +14,6 @@ const twitchSettings = (twitch) => {
       // audio codec config: sampling frequency (11025, 22050, 44100), bitrate 64 kbits
       '-c:a',
       'aac',
-      '-strict',
-      '-2',
       '-ar',
       '44100',
       '-b:a',
@@ -32,8 +30,8 @@ const twitchSettings = (twitch) => {
 
       //'-filter_complex', 'aresample=44100', // resample audio to 44100Hz, needed if input is not 44100
       //'-strict', 'experimental',
-    '-bufsize',
-      '1000',
+    // '-bufsize',
+    //   '1000',
       '-f',
       'flv',
       twitch,

@@ -18,9 +18,24 @@ const Studio = () => {
   const MIC_BUTTON_TEXT : JSX.Element = micText ? <FaMicrophoneSlash size='24'/> : <FaMicrophone size='20'/>;
   const GO_LIVE_TEXT : string = live ? "End Live" : "Go Live";
   const SCREEN_SHARE_BUTTON_TEXT : JSX.Element = <TbShare2 size='25'/>;
-  let socket = io('ws://localhost:5001', {
-    transports: ['websocket'],
-  });
+  const [socket, setSocket] = useState<any | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasStreamRef = useRef<MediaStream | null>(null);
+  const height = 350;
+  const width = 500;
+  
+  useEffect(() => {
+    const newSocket = io('ws://localhost:5001', {
+      transports: ['websocket'],
+    });
+
+    setSocket(newSocket);
+
+    // Cleanup function to disconnect the socket when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []); 
   
   useEffect(() => {
     const startUserMediaStream = async () => {
@@ -57,6 +72,31 @@ const Studio = () => {
       });
     }
   }, [screenShareStream])
+
+ 
+  useEffect(() => {
+    const drawOnCanvas = () => {
+      const ctx = canvasRef.current?.getContext('2d');
+      if (ctx && userVideoRef.current && screenShareVideoRef.current) {
+        ctx.clearRect(0, 0, width, height);
+
+        if (!isScreenSharing) {
+          ctx.drawImage(userVideoRef.current, 0, 0, width, height);
+        } else {
+          ctx.drawImage(screenShareVideoRef.current, 0, 0, width, height);
+          ctx.drawImage(userVideoRef.current, 0, 0, width / 4, height / 4);
+        }
+      }
+      requestAnimationFrame(drawOnCanvas);
+    };
+
+    requestAnimationFrame(drawOnCanvas);
+
+    if (canvasRef.current) {
+      const canvasStream = canvasRef.current.captureStream(30); // Capture canvas as a stream
+      canvasStreamRef.current = canvasStream;
+    }
+  }, [isScreenSharing, screenShareStream, userStream]);
 
   const toggleVideo = () => {
     if (userStream) {
@@ -100,11 +140,11 @@ const Studio = () => {
 
   const handleLive =()=>{
     setLive(live => !live);
-    if(socket == undefined){
-      socket = io('ws://localhost:5001', {
-        transports: ['websocket'],  
-      });
-    }
+    // if(socket == undefined){
+    //   socket = io('ws://localhost:5001', {
+    //     transports: ['websocket'],  
+    //   });
+    // }
     console.log(socket);
     console.log(userStream);
     if(userStream){
@@ -116,19 +156,33 @@ const Studio = () => {
   };
 
   const recorderInit = () => {
-    let liveStream = (userVideoRef.current as any).captureStream(30);
+    
+    if (canvasStreamRef.current) {
+      //@ts-ignore
+      //const liveStream = (canvasRef.current as any).captureStream(30); 
+      //const liveStream = (userVideoRef.current as any).captureStream(30);
+      const liveStream = (screenShareVideoRef.current as any).captureStream(30);
+      const audioStream = userStream.getAudioTracks()[0];
+      const liveStreamTrack = liveStream.getVideoTracks()[0];
 
-    let mediaRecorder = new MediaRecorder(liveStream, {
-      mimeType: 'video/webm;codecs=h264',
-      videoBitsPerSecond: 3 * 1024 * 1024,
-    });
+      const merge = new MediaStream([
+        liveStreamTrack,
+        audioStream,
+      ])
+      let mediaRecorder = new MediaRecorder(merge, {
+        mimeType: 'video/webm;codecs=h264',
+        videoBitsPerSecond: 3 * 1024 * 1024,
+      });
 
-    console.log(mediaRecorder, mediaRecorder.ondataavailable);
-    mediaRecorder.ondataavailable = (e: any) => {
-      console.log('sending chunks', e.data, socket);
-      socket.send(e.data);
-    };
-    mediaRecorder.start(1000);
+      console.log(mediaRecorder, mediaRecorder.ondataavailable);
+      mediaRecorder.ondataavailable = (e: any) => {
+          console.log('sending chunks', e.data, socket);
+          socket.send(e.data);
+      };
+      mediaRecorder.start(1000);
+    } else {
+      console.error('Canvas stream is not available');
+    }
   };
 
 
@@ -136,11 +190,13 @@ const Studio = () => {
     <div className='flex'>
       <div className='w-4/6 p-4 bg-secondary'>
         <div className='flex gap-3'>
-          <Video className='w-[450px] h-[350px]' videoRef={userVideoRef} />
-          <Video className={`w-[450px] h-[350px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+          <Video className='w-[250px] h-[150px]' videoRef={userVideoRef} />
+          <Video className={`w-[250px] h-[150px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+        </div>
+        <div className='flex items-center justify-center mt-4'>
+          <canvas ref={canvasRef} width= {width} height={height}/>
         </div>
         <div className='border border-lime-500 p-10'>
-          <p>Canvas Layouts go here</p>
         </div>
         <div className='flex gap-2'>
           <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>

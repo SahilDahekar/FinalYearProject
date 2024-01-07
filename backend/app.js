@@ -7,7 +7,7 @@ import morgan from 'morgan'
 import appRouter from "./routes/index.js";
 import cookieParser from "cookie-parser";
 import { ChildProcess, spawn } from 'child_process';
-import { inputSettings , twitchSettings } from "./utils/ffmpeg.js";
+import { inputSettings , twitchSettings , youtubeSettings} from "./utils/ffmpeg.js";
 const app = express();
 // Configure CORS to allow only requests from port 5173
 const corsOptions = {
@@ -24,6 +24,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(morgan('dev'));
 
 app.use('/api', appRouter);
+const encodingTimes = [];
 
 const io = new Server(5001, {
     cors: {
@@ -43,10 +44,11 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log(`Socket disconnected: ${socket.id}`);
       });
-  const twitch = `rtmp://live.twitch.tv/app/${process.env.TWITCH_STREAM_KEY}`;
+  const twitch = `rtmp://live.twitch.tv/app/live${process.env.TWITCH_STREAM_KEY}`;
+  const yt = `rtmp://a.rtmp.youtube.com/live2/${process.env.YOUTUBE_STREAM_KEY}`;
   const ffmpegInput = inputSettings.concat(
-    // youtubeSettings(youtubeDestinationUrl),
-    twitchSettings(twitch)
+    youtubeSettings(yt),
+    //twitchSettings(twitch)
     // facebookSettings(facebook),
     // customRtmpSettings(customRTMP)
   );
@@ -58,6 +60,10 @@ io.on('connection', (socket) => {
     // ws.terminate()
   });
 
+  ffmpeg.stdout.on('data', (data) => {
+    //console.log('FFmpeg STDOUT:', data.toString());
+  });
+  
   // Handle STDIN pipe errors by logging to the console.
   // These errors most commonly occur when FFmpeg closes and there is still
   // data to write.  If left unhandled, the server will crash.
@@ -72,10 +78,10 @@ io.on('connection', (socket) => {
 
   // When data comes in from the WebSocket, write it to FFmpeg's STDIN.
   socket.on('message', (msg) => {
-    console.log('DATA', msg);
+    //console.log('DATA', msg);
     ffmpeg.stdin.write(msg);
   });
-
+  
   // If the client disconnects, stop FFmpeg.
   socket.conn.on('close', (e) => {
     console.log('kill: SIGINT');

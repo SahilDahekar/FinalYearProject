@@ -80,7 +80,7 @@ function Landing() {
           <h3 className='text-center scroll-m-20 text-4xl font-semibold tracking-tight my-12'>Our Features</h3>
           <div className='mx-auto max-w-7xl py-4 gap-x-3 gap-y-5 grid grid-cols-3 justify-center'>
             {features.map(feature => (
-              <FeatureCard title={feature.title} desc={feature.desc} child={feature.child} />
+              <FeatureCard key={feature.title} title={feature.title} desc={feature.desc} child={feature.child} />
             ))}
           </div>
         </div>

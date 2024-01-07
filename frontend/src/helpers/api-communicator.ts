@@ -1,6 +1,7 @@
-import axios from "axios";
+import api from "@/lib/api";
+
 export const loginUser = async (email: string, password: string) => {
-  const res = await axios.post("http://localhost:8000/api/user/login", { email, password });
+  const res = await api.post("/user/login", { email, password });
   if (res.status !== 200) {
     throw new Error("Unable to login");
   }
@@ -13,7 +14,7 @@ export const signupUser = async (
   email: string,
   password: string
 ) => {
-  const res = await axios.post("http://localhost:8000/api/user/signup", { name, email, password });
+  const res = await api.post("/user/signup", { name, email, password });
   if (res.status !== 201) {
     throw new Error("Unable to Signup");
   }
@@ -22,7 +23,7 @@ export const signupUser = async (
 };
 
 export const checkAuthStatus = async () => {
-  const res = await axios.get("http://localhost:8000/api/user/auth-status");
+  const res = await api.get("/user/auth-status");
   if (res.status !== 200) {
     throw new Error("Unable to authenticate");
   }
@@ -31,7 +32,7 @@ export const checkAuthStatus = async () => {
 };
 
 export const logoutUser = async () => {
-    const res = await axios.get("http://localhost:8000/api/user/logout");
+    const res = await api.get("/user/logout");
     if (res.status !== 200) {
       throw new Error("Unable to delete chats");
     }

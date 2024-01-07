@@ -2,7 +2,7 @@ import { connect,disconnect } from 'mongoose'
 
 async function connectToDatabase() {
     try {
-        await connect("mongodb+srv://Parth2:Parth20@cluster0.nlyt64i.mongodb.net/?retryWrites=true&w=majority");
+        await connect(process.env.MONGODB_URL);
     } catch (error) {
         throw new Error("cannot connect to DB");
     }

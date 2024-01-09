@@ -21,9 +21,8 @@ const Studio = () => {
   const [socket, setSocket] = useState<any | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasStreamRef = useRef<MediaStream | null>(null);
-  const height = 350;
-  const width = 500;
-  
+  const height = 800/1.77;
+  const width = 800;
   useEffect(() => {
     const newSocket = io('ws://localhost:5001', {
       transports: ['websocket'],
@@ -81,21 +80,20 @@ const Studio = () => {
         ctx.clearRect(0, 0, width, height);
 
         if (!isScreenSharing) {
-          ctx.drawImage(userVideoRef.current, 0, 0, width, height);
-        } else {
+          ctx.drawImage(userVideoRef.current, 0, 0, (height*1.33), height);
+        }else{
           ctx.drawImage(screenShareVideoRef.current, 0, 0, width, height);
-          ctx.drawImage(userVideoRef.current, 0, 0, width / 4, height / 4);
+          ctx.drawImage(userVideoRef.current, 0, 0, width / 4, (width/1.33) / 4);
         }
       }
       requestAnimationFrame(drawOnCanvas);
+      // if (canvasRef.current) {
+      //   const canvasStream = canvasRef.current.captureStream(30); // Capture canvas as a stream
+      //   canvasStreamRef.current = canvasStream;
+      // }
     };
 
     requestAnimationFrame(drawOnCanvas);
-
-    if (canvasRef.current) {
-      const canvasStream = canvasRef.current.captureStream(30); // Capture canvas as a stream
-      canvasStreamRef.current = canvasStream;
-    }
   }, [isScreenSharing, screenShareStream, userStream]);
 
   const toggleVideo = () => {
@@ -120,7 +118,6 @@ const Studio = () => {
         const screenShareStream = await navigator.mediaDevices.getDisplayMedia({
           video: true,
         });
-
         setScreenShareStream(screenShareStream);
         const screenShareRef = screenShareVideoRef.current;
         if (screenShareRef) {
@@ -157,12 +154,12 @@ const Studio = () => {
 
   const recorderInit = () => {
     
-    if (canvasStreamRef.current) {
+    if (canvasRef.current) {
       //@ts-ignore
+      const liveStream = (userVideoRef.current as any).captureStream(30);
+      //const liveStream = (screenShareVideoRef.current as any).captureStream(30);
       //const liveStream = (canvasRef.current as any).captureStream(30); 
-      //const liveStream = (userVideoRef.current as any).captureStream(30);
-      const liveStream = (screenShareVideoRef.current as any).captureStream(30);
-      const audioStream = userStream.getAudioTracks()[0];
+      const audioStream = userStream?.getAudioTracks()[0];
       const liveStreamTrack = liveStream.getVideoTracks()[0];
 
       const merge = new MediaStream([
@@ -185,13 +182,14 @@ const Studio = () => {
     }
   };
 
+  
 
   return (
     <div className='flex'>
       <div className='w-4/6 p-4 bg-secondary'>
         <div className='flex gap-3'>
-          <Video className='w-[250px] h-[150px]' videoRef={userVideoRef} />
-          <Video className={`w-[250px] h-[150px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+          <Video className='w-[1000px] h-[1000px] hidden' videoRef={userVideoRef} />
+          <Video className={`w-[1000px] h-[1000px] hidden`} videoRef={screenShareVideoRef} />
         </div>
         <div className='flex items-center justify-center mt-4'>
           <canvas ref={canvasRef} width= {width} height={height}/>

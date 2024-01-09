@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { useAuth } from '@/context/AuthContext';
 import ToogleCard from './ToogleCard';
 import api from '@/lib/api';
 
@@ -8,7 +8,17 @@ type Toggle = {
   callback : () => void;
 }
 
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 export default function Destination() {
+
+  const auth = useAuth();
+
+  console.log("Your google client id : " + import.meta.env.VITE_GOOGLE_CLIENT_ID);
 
   const cards : Toggle[] = [
     {
@@ -30,22 +40,26 @@ export default function Destination() {
 
   function handleYoutubeAuth(){
     /*global google*/ 
+    console.log("Inside Youtube Auth function");
+
     if(window.google){
-      const client = google.accounts.oauth2.initCodeClient({
-        client_id: 'YOUR_CLIENT_ID',
-        scope: 'https://www.googleapis.com/auth/calendar.readonly',
+      // This is client obj conataining config for youtube auth
+      const client = window.google.accounts.oauth2.initCodeClient({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/youtube.force-ssl',
         ux_mode: 'popup',
         callback: (response : any) => {
-          const code_receiver_uri = 'http://localhost:8000/api/authorize/yt';
+          console.log('Response : ', response);
+          const payload = {
+            code : response.code,
+            user_name : auth?.user?.name,
+            user_email : auth?.user?.email
+          }
 
           // Send auth code to your backend platform using Axios
-          axios.post(code_receiver_uri, 'code=' + response.code, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          })
+          api.post('/authorize/yt', payload)
           .then(function (axiosResponse) {
-            console.log('Signed in as: ' + axiosResponse.data);
+            console.log(axiosResponse.data);
           })
           .catch(function (error) {
             console.error('Error signing in:', error);
@@ -53,6 +67,7 @@ export default function Destination() {
         }
       });
 
+      // This function is used to request an authorization code
       client.requestCode();
     }
     else {

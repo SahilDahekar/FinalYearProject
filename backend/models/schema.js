@@ -39,10 +39,6 @@ const broadcastSchema = new mongoose.Schema({
     timestamp: true,
 });
 
-
-const Destination = mongoose.model('Destination', destinationSchema);
-const Broadcast = mongoose.model('Broadcast', broadcastSchema);
-
 /* ******************************************************************************************
 User Schema Defined Here 
 ******************************************************************************************/
@@ -58,5 +54,7 @@ const userSchema = new Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+const Destination = mongoose.model('Destination', destinationSchema);
+const Broadcast = mongoose.model('Broadcast', broadcastSchema);
 
 export {User,Destination,Broadcast};

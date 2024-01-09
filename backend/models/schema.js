@@ -3,23 +3,6 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 /* ******************************************************************************************
-User Schema Defined Here 
-******************************************************************************************/
-
-const userSchema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
-  //destinationSchema:[destinationSchema],
-  //broadcastSchema:[broadcastSchema],
-},{
-    timestamp: true,
-});
-
-const User = mongoose.model('User', userSchema);
-
-
-/* ******************************************************************************************
    Destination Schema Defined Here (YouTube,FaceBook,Twitch)
 ******************************************************************************************/
 
@@ -35,11 +18,8 @@ const destinationSchema = new mongoose.Schema({
     facebook_long_access_token: { type: String }
 });
 
-const Destination = mongoose.model('Destination', destinationSchema);
-
-
 /* ******************************************************************************************
-   Broadcast Schema Defined Here (YouTube,FaceBook,Twitch)
+Broadcast Schema Defined Here (YouTube,FaceBook,Twitch)
 ******************************************************************************************/
 
 const broadcastSchema = new mongoose.Schema({
@@ -59,6 +39,24 @@ const broadcastSchema = new mongoose.Schema({
     timestamp: true,
 });
 
+
+const Destination = mongoose.model('Destination', destinationSchema);
 const Broadcast = mongoose.model('Broadcast', broadcastSchema);
+
+/* ******************************************************************************************
+User Schema Defined Here 
+******************************************************************************************/
+
+const userSchema = new Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    destinationSchema:[destinationSchema],
+    broadcastSchema:[broadcastSchema],
+},{
+    timestamp: true,
+});
+
+const User = mongoose.model('User', userSchema);
 
 export {User,Destination,Broadcast};

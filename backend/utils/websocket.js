@@ -1,8 +1,6 @@
 import { Server } from 'socket.io';
 import { ChildProcess, spawn } from 'child_process';
 import { inputSettings , twitchSettings , youtubeSettings} from "./ffmpeg.js";
-import cors  from "cors";
-
 
 const WebSocket=(()=>{
 

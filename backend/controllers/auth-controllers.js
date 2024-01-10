@@ -6,14 +6,18 @@ export const getYoutubeTokens = async (req, res, next) => {
     try {
         const { code , user_name , user_email } = req.body;
 
-        const user = await User.find({ name : user_name, email : user_email});
+        let user_id;
+
+        const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+            console.log(user._id.valueOf());
+            user_id = user._id.valueOf();
+            return user;
+        });
 
         if(!user){
             return res.status(404).send("User does not exist");
         }
 
-        console.log(user);
-        console.log(user._id);
 
         if(!code){
             return res.status(404).send("Code not found");
@@ -44,7 +48,7 @@ export const getYoutubeTokens = async (req, res, next) => {
         console.log("Access Token : " + tokens.data.access_token + "Refresh Token : " + tokens.data.refresh_token);
 
         const des = {
-            user_id: user._id,
+            user_id: user_id,
             youtube_access_token: tokens.data.access_token,
             youtube_refresh_token: tokens.data.refresh_token,
         };

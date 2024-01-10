@@ -5,7 +5,7 @@ import { IoVideocam ,IoKey } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from '@/context/AuthContext';
 import { Navigate } from "react-router-dom";
-
+import { Toaster } from "@/components/ui/toaster"
 
 function Dashboard() {
     const auth = useAuth();
@@ -16,6 +16,7 @@ function Dashboard() {
 
     return (
         <div className='h-screen'>
+            <Toaster/>
             <div className='flex justify-between py-4 px-3 border-b'>
                 <h1 className='text-3xl font-semibold tracking-tight'>Dashboard</h1>
                 <div>

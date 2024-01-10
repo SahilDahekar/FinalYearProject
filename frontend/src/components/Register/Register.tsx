@@ -17,7 +17,8 @@ import {
 import { Input } from "@/components/ui/input";
 import {toast} from 'react-hot-toast';
 import { useAuth } from "@/context/AuthContext";
-// import api from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -33,6 +34,7 @@ const formSchema = z.object({
 
 function Register() {
     const auth = useAuth();
+    const { toast } = useToast();
     if (!auth) {
         // Handle the case when auth is null
         return <div>Loading...</div>; // or any other fallback UI/UX
@@ -55,30 +57,29 @@ function Register() {
         const name = values.name;
         const email = values.email;
         const password = values.password;
-        // try {
-        //   toast.loading("Signing Up", { id: "signup" });
-        //   await api.post("/user/signup",{
-        //   name,email,password })
-        //   toast.success("Signed Up Successfully", { id: "signup" });
-        // } catch (error) {
-        //   console.log(error);
-        //   toast.error("Signing Up Failed", { id: "signup" });
-        // }
         try {
-            toast.loading("Signing Up", { id: "signup" });
             await auth?.signup(name, email, password);
-            toast.success("Signed Up Successfully", { id: "signup" });
+            toast({
+                title : `Logged in as ${email}`
+            });
             setIsLoading(false);
           } catch (error) {
             console.log(error);
-            toast.error("Signing Up Failed", { id: "signup" });
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: "There was a problem with your request.",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+            });
             setIsLoading(false);
           }
     };
 
     useEffect(()=>{
       if(auth?.user){
-        return navigate("/broadcast")
+        setTimeout(() => {
+            navigate("/broadcast");
+        }, 500);
       }
     },[auth])
 

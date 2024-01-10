@@ -8,11 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Toaster } from '@/components/ui/toaster'
 
 
 function Auth() {
   return (
     <div className='flex h-screen'>
+      <Toaster/>
       <div className='w-1/2'>
         <img className='object-cover w-full h-full' src="https://images.unsplash.com/photo-1679669693237-74d556d6b5ba?q=80&w=1998&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="placeholder 3d render image" />
       </div>

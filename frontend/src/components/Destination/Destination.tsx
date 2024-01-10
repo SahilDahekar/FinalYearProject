@@ -1,6 +1,8 @@
 import { useAuth } from '@/context/AuthContext';
 import ToogleCard from './ToogleCard';
 import api from '@/lib/api';
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from '../ui/toast';
 
 type Toggle = {
   title : string;
@@ -16,6 +18,7 @@ declare global {
 
 export default function Destination() {
 
+  const { toast } = useToast();
   const auth = useAuth();
 
   console.log("Your google client id : " + import.meta.env.VITE_GOOGLE_CLIENT_ID);
@@ -60,9 +63,18 @@ export default function Destination() {
           api.post('/authorize/yt', payload)
           .then(function (axiosResponse) {
             console.log(axiosResponse.data);
+            toast({
+              title: "Youtube added as destination",
+            })
           })
           .catch(function (error) {
             console.error('Error signing in:', error);
+            toast({
+              variant: "destructive",
+              title: "Uh oh! Something went wrong.",
+              description: "There was a problem with your request.",
+              action: <ToastAction altText="Try again">Try again</ToastAction>,
+          });
           });
         }
       });

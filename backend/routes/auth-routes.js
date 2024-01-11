@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { getYoutubeTokens } from "../controllers/auth-controllers.js";
+import { getFacebookTokens, getTwitchTokens, getYoutubeTokens } from "../controllers/auth-controllers.js";
 
 const authRouter = Router();
 
 authRouter.post("/yt", getYoutubeTokens);
+authRouter.post("/twitch", getTwitchTokens);
+authRouter.post("/fb", getFacebookTokens);
 
 export default authRouter

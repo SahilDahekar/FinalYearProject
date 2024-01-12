@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 
 function Navbar() {
     const auth = useAuth();
+
     console.log(auth);
 
     const list = [

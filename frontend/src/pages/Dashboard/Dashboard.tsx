@@ -9,9 +9,12 @@ import { Toaster } from "@/components/ui/toaster"
 
 function Dashboard() {
     const auth = useAuth();
-
-    if(!auth?.user){
-        return <Navigate to="/" />
+    
+    if (!auth?.user) {
+        if (auth?.isLoading) {
+            return <div>Loading..</div>;
+        }
+        return <Navigate to="/" />;
     }
 
     return (

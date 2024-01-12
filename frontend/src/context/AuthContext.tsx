@@ -17,8 +17,9 @@ import {
     email: string;
   };
   type UserAuth = {
-    isLoggedIn: boolean;
     user: User | null;
+    isLoggedIn: boolean;
+    isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     signup: (name: string, email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
@@ -28,16 +29,17 @@ import {
   export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
   
-    useEffect(() => {
-      // fetch if the user's cookies are valid then skip login
-      async function checkStatus() {
-        const data = await checkAuthStatus();
-        if (data) {
-          setUser({ email: data.email, name: data.name });
-          setIsLoggedIn(true);
-        }
+    async function checkStatus() {
+      const data = await checkAuthStatus();
+      if (data) {
+        setUser({ email: data.email, name: data.name });
+        setIsLoggedIn(true);
       }
+      setIsLoading(false);
+    }
+    useEffect(() => {
       checkStatus();
     }, []);
 
@@ -60,12 +62,15 @@ import {
       await logoutUser();
       setIsLoggedIn(false);
       setUser(null);
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     };
   
     const value = {
       user,
       isLoggedIn,
+      isLoading,
       login,
       logout,
       signup,

@@ -11,7 +11,7 @@ function Header() {
             A professional live streaming studio in your browser. Stream to Facebook , Twitch , Youtube , and other platforms together right from StreamSync.
         </p>
         <Button className='text-lg font-bold px-4' asChild size='lg'>
-            <Link to="/register">Get Started <FiArrowRight className="ml-2" /></Link>
+            <Link to="/auth">Get Started <FiArrowRight className="ml-2" /></Link>
         </Button>
         </div>
         <div className='w-1/2 h-[400px]'>

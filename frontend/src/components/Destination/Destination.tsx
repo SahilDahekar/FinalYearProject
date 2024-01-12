@@ -4,8 +4,8 @@ import api from '@/lib/api';
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from '../ui/toast';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import getUrlParams from '@/helpers/getUrlParams';
+import { useNavigate } from 'react-router-dom';
 
 type Toggle = {
   title : string;
@@ -29,19 +29,7 @@ export default function Destination() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const TWITCH_SCOPE = encodeURIComponent(
-    'channel:manage:broadcast channel:read:stream_key'
-  );
-
-  const TWITCH_URL = `https://id.twitch.tv/oauth2/authorize
-    ?client_id=${import.meta.env.VITE_TWITCH_CLIENT_ID}
-    &redirect_uri=http://localhost:5173/destination
-    &response_type=code
-    &scope=${TWITCH_SCOPE}
-    &force_verify=true
-  `;
-
-  console.log(TWITCH_URL);
+  console.log(auth);
 
   //Uncomment to check your google client id
   //console.log("Your google client id : " + import.meta.env.VITE_GOOGLE_CLIENT_ID);
@@ -49,11 +37,16 @@ export default function Destination() {
   useEffect(() => {
     if(window.location.href.includes('?code')){
       console.log("Inside if condition useEffect");
-      const code = getUrlParams(window.location.href);
+      console.log(window.location.href);
+      const code = getUrlParams('code');
       console.log("Found Twitch code", code);
-      sendTwitchCode(code);
-      console.log("Code sent successfully");
-      navigate('/destination', { replace: true });
+      // setTimeout(() => {
+        if(code){
+          sendTwitchCode(code);
+          console.log("Code sent successfully");
+        }
+      // }, 2000);
+      navigate('/destination');
     }
   },[]);
 
@@ -134,6 +127,8 @@ export default function Destination() {
     }
   }
 
+
+  //Twitch Redirect url
   function handleTwitchAuth(){
 
     console.log("Inside Twitch Auth function");
@@ -147,10 +142,33 @@ export default function Destination() {
       return;
     }
 
-    window.location.href = TWITCH_URL;
+    const TWITCH_SCOPE = encodeURIComponent(
+      'channel:manage:broadcast channel:read:stream_key'
+    );
+  
+    console.log(TWITCH_SCOPE);
+
+    const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID.trim();
+    const redirectUri = 'http://localhost:5173/destination'.trim();
+    const twitchScope = TWITCH_SCOPE.trim();
+
+    console.log('clientId:', clientId);
+    console.log('redirectUri:', redirectUri);
+    console.log('twitchScope:', twitchScope);
+
+    const twitchAuthURL = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${twitchScope}&force_verify=true`;
+
+    console.log('twitchAuthURL:', twitchAuthURL);
+
+    window.location.href = twitchAuthURL;
   }
 
-  function sendTwitchCode(TWITCH_CODE? : string | null){
+
+  //Twitch Auth Code
+  function sendTwitchCode(TWITCH_CODE? : string){
+    setTimeout(() => {
+      
+    }, 2000);
     const payload = {
       code : TWITCH_CODE,
       user_name : auth?.user?.name,
@@ -176,6 +194,8 @@ export default function Destination() {
     });
   }
 
+
+  //Facebook Auth
   function handleFacebookAuth(){
     if(fbAdded){
       toast({

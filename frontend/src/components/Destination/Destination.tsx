@@ -3,7 +3,9 @@ import ToogleCard from './ToogleCard';
 import api from '@/lib/api';
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from '../ui/toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import getUrlParams from '@/helpers/getUrlParams';
 
 type Toggle = {
   title : string;
@@ -25,8 +27,35 @@ export default function Destination() {
 
   const { toast } = useToast();
   const auth = useAuth();
+  const navigate = useNavigate();
 
-  console.log("Your google client id : " + import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  const TWITCH_SCOPE = encodeURIComponent(
+    'channel:manage:broadcast channel:read:stream_key'
+  );
+
+  const TWITCH_URL = `https://id.twitch.tv/oauth2/authorize
+    ?client_id=${import.meta.env.VITE_TWITCH_CLIENT_ID}
+    &redirect_uri=http://localhost:5173/destination
+    &response_type=code
+    &scope=${TWITCH_SCOPE}
+    &force_verify=true
+  `;
+
+  console.log(TWITCH_URL);
+
+  //Uncomment to check your google client id
+  //console.log("Your google client id : " + import.meta.env.VITE_GOOGLE_CLIENT_ID);
+
+  useEffect(() => {
+    if(window.location.href.includes('?code')){
+      console.log("Inside if condition useEffect");
+      const code = getUrlParams(window.location.href);
+      console.log("Found Twitch code", code);
+      sendTwitchCode(code);
+      console.log("Code sent successfully");
+      navigate('/destination', { replace: true });
+    }
+  },[]);
 
   const cards : Toggle[] = [
     {
@@ -52,6 +81,7 @@ export default function Destination() {
   function handleYoutubeAuth(){
     /*global google*/ 
     console.log("Inside Youtube Auth function");
+
     if(ytAdded){
       toast({
         title : "Youtube is already added as destination!",
@@ -77,7 +107,7 @@ export default function Destination() {
 
           // Send auth code to your backend platform using Axios
           api.post('/authorize/yt', payload)
-          .then(function (axiosResponse) {
+          .then((axiosResponse) => {
             console.log(axiosResponse.data);
             toast({
               title: "Youtube added as destination",
@@ -91,7 +121,7 @@ export default function Destination() {
               title: "Uh oh! Something went wrong.",
               description: "There was a problem with your request.",
               action: <ToastAction onClick={handleYoutubeAuth} altText="Try again">Try again</ToastAction>,
-          });
+            });
           });
         }
       });
@@ -105,6 +135,9 @@ export default function Destination() {
   }
 
   function handleTwitchAuth(){
+
+    console.log("Inside Twitch Auth function");
+
     if(twitchAdded){
       toast({
         title : "Twitch is already added as destination!",
@@ -113,10 +146,33 @@ export default function Destination() {
       });
       return;
     }
-    setTwitchAdded(true);
-    console.log("Twitch Auth");
-    toast({
-      title: "Twitch added as destination",
+
+    window.location.href = TWITCH_URL;
+  }
+
+  function sendTwitchCode(TWITCH_CODE? : string | null){
+    const payload = {
+      code : TWITCH_CODE,
+      user_name : auth?.user?.name,
+      user_email : auth?.user?.email
+    }
+
+    api.post('authorize/twitch', payload)
+    .then((response) => {
+        console.log(response.data);
+        setTwitchAdded(true);
+        toast({
+          title: "Twitch added as destination",
+        });
+    })
+    .catch((error) => {
+      console.error('Error signing in:', error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction onClick={handleTwitchAuth} altText="Try again">Try again</ToastAction>,
+      });
     });
   }
 

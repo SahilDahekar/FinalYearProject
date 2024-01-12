@@ -95,6 +95,8 @@ export const getFacebookTokens = async (req, res, next) => {
     try {
         const { code , user_name , user_email } = req.body;
 
+        console.log(code , user_name , user_email);
+
         const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
             console.log(user._id.valueOf());
             return user;

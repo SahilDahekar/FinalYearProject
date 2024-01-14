@@ -49,6 +49,8 @@ import {
       if (data) {
         setUser({ email: data.email, name: data.name });
         setIsLoggedIn(true);
+
+        checkStatus();
       }
     };
     const signup = async (name: string, email: string, password: string) => {
@@ -56,6 +58,8 @@ import {
       if (data) {
         setUser({ email: data.email, name: data.name });
         setIsLoggedIn(true);
+
+        checkStatus();
       }
     };
     const logout = async () => {

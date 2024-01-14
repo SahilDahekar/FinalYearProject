@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button'
 import { IoVideocam ,IoKey } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from '@/context/AuthContext';
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster"
 
 function Dashboard() {
     const auth = useAuth();
+    const navigate = useNavigate();
     
     if (!auth?.user) {
         if (auth?.isLoading) {
@@ -37,7 +38,10 @@ function Dashboard() {
                     <Button className='text-base' asChild variant="ghost" size='lg'>
                         <Link to="/destination"><IoKey className='mr-2'/>Destination</Link>
                     </Button>
-                    <Button onClick={() => auth?.logout()} className='text-base mt-auto' variant="default" size='lg'>
+                    <Button onClick={() => {
+                        auth?.logout();
+                        navigate('/');
+                    }} className='text-base mt-auto' variant="default" size='lg'>
                         <TbLogout2 className='mr-2'/> Sign Out
                     </Button>
                 </div>

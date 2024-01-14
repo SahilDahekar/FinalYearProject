@@ -44,20 +44,12 @@ export const getYoutubeTokens = async (req, res, next) => {
         console.log("Access Token : " + tokens.data.access_token + "Refresh Token : " + tokens.data.refresh_token);
 
         const des = {
-            user_id: user._id.valueOf(),
             youtube_access_token: tokens.data.access_token,
             youtube_refresh_token: tokens.data.refresh_token,
         };
         
         // Using findOneAndUpdate with upsert option
-        const filter = { user_id: user._id };
-        const update = { $set: des };
-        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        
-        const destination = await Destination.findOneAndUpdate(filter, update, options);
-        
-        console.log('Destination:', destination);
-          
+        updateTokensInDestination(user._id.valuesOf(), des);
 
         res.status(200).json(tokens.data);
     } catch (error) {
@@ -107,20 +99,12 @@ export const getTwitchTokens = async (req, res, next) => {
         console.log("Access Token : " + tokens.data.access_token + "Refresh Token : " + tokens.data.refresh_token);
 
         const des = {
-            user_id: user._id.valueOf(),
             twitch_access_token: tokens.data.access_token,
             twitch_refresh_token: tokens.data.refresh_token
         };
         
         // Using findOneAndUpdate with upsert option
-        const filter = { user_id: user._id };
-        const update = { $set: des };
-        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        
-        const destination = await Destination.findOneAndUpdate(filter, update, options);
-        
-        console.log('Destination:', destination);
-          
+        updateTokensInDestination(user._id.valueOf(), des);
 
         res.status(200).json(tokens.data);
 
@@ -155,4 +139,14 @@ export const getFacebookTokens = async (req, res, next) => {
     } catch (error) {
         return res.status(404).json({ message: "error", cause: error.message });
     }   
+}
+
+const updateTokensInDestination = async (userId, tokensObj) => {
+    const filter = { user_id: userId };
+    const update = { $set: tokensObj };
+    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    
+    const destination = await Destination.findOneAndUpdate(filter, update, options);
+    
+    console.log('Destination:', destination);
 }

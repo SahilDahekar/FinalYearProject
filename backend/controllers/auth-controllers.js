@@ -141,7 +141,7 @@ export const getFacebookTokens = async (req, res, next) => {
     }   
 }
 
-const updateTokensInDestination = async (userId, tokensObj) => {
+export const updateTokensInDestination = async (userId, tokensObj) => {
     const filter = { user_id: userId };
     const update = { $set: tokensObj };
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };

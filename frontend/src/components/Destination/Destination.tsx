@@ -14,6 +14,20 @@ type Toggle = {
   callback : () => void;
 }
 
+type User = {
+  name: string;
+  email: string;
+};
+
+type UserAuth = {
+  user: User | null;
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+};
+
 declare global {
   interface Window {
     google: any;
@@ -50,6 +64,12 @@ export default function Destination() {
     }
   },[]);
 
+  useEffect(() => {
+    if(auth){
+      updateDestinations(auth);
+    }
+  },[]);
+
   const cards : Toggle[] = [
     {
       title : "YouTube",
@@ -71,6 +91,70 @@ export default function Destination() {
     }
   ];
 
+  async function getDestinations(name : string | undefined, email : string | undefined){
+    const payload = {
+      user_name : name,
+      user_email : email
+    }
+
+    try {
+      const response = await api.post('/destinations/', payload);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error in getting destinations : ", error);
+    }
+  }
+
+  async function removeDestinations(platform : string){
+    
+    const payload = {
+      platform : platform,
+      user_name : auth?.user?.name,
+      user_email : auth?.user?.email
+    }
+
+    try {
+      const response = await api.post('/destinations/remove', payload);
+      if(response.data){
+        console.log(response.data);
+        switch(platform){
+          case 'Youtube' : 
+            setYtAdded(false);
+            break;
+          case 'Twitch' :
+            setTwitchAdded(false);
+            break;
+          case 'Facebook' :
+            setFbAdded(false);
+            break;
+          default :
+            throw new Error(`Unknown platfrom ${platform}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error in removing destinations : ", error);
+    }
+  }
+
+  async function updateDestinations(auth : UserAuth){
+    const destination = await getDestinations(auth?.user?.name, auth?.user?.email);
+    if(destination.youtube){
+      setYtAdded(true);
+      console.log("Youtube added from db" , destination.youtube);
+    }
+    if(destination.facebook){
+      setFbAdded(true);
+      console.log("Facebook added from db" , destination.facebook);
+    }
+    if(destination.twitch){
+      setTwitchAdded(true);
+      console.log("Twitch added from db" , destination.twitch);
+    }
+  }
+
+
+  //Youtube Auth
   function handleYoutubeAuth(){
     /*global google*/ 
     console.log("Inside Youtube Auth function");
@@ -79,7 +163,7 @@ export default function Destination() {
       toast({
         title : "Youtube is already added as destination!",
         description : "Do you want to remove youtube from destination",
-        action : <ToastAction onClick={() => setYtAdded(false)} altText="Remove">Remove</ToastAction>
+        action : <ToastAction onClick={() => removeDestinations("Youtube")} altText="Remove">Remove</ToastAction>
       });
       return;
     }
@@ -137,7 +221,7 @@ export default function Destination() {
       toast({
         title : "Twitch is already added as destination!",
         description : "Do you want to remove twitch from destination",
-        action : <ToastAction onClick={() => setTwitchAdded(false)} altText="Remove">Remove</ToastAction>
+        action : <ToastAction onClick={() => removeDestinations("Twitch")} altText="Remove">Remove</ToastAction>
       });
       return;
     }
@@ -201,7 +285,7 @@ export default function Destination() {
       toast({
         title : "Facebook is already added as destination!",
         description : "Do you want to remove facebook from destination",
-        action : <ToastAction onClick={() => setFbAdded(false)} altText="Remove">Remove</ToastAction>
+        action : <ToastAction onClick={() => removeDestinations("Facebook")} altText="Remove">Remove</ToastAction>
       });
       return;
     }

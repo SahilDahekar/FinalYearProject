@@ -106,18 +106,32 @@ export default function Destination() {
     }
   }
 
-  async function removeDestinations(platform : string , name : string | undefined , email : string | undefined){
+  async function removeDestinations(platform : string){
     
     const payload = {
       platform : platform,
-      user_name : name,
-      user_email : email
+      user_name : auth?.user?.name,
+      user_email : auth?.user?.email
     }
 
     try {
       const response = await api.post('/destinations/remove', payload);
-      if(response.data)
-      return response.data;
+      if(response.data){
+        console.log(response.data);
+        switch(platform){
+          case 'Youtube' : 
+            setYtAdded(false);
+            break;
+          case 'Twitch' :
+            setTwitchAdded(false);
+            break;
+          case 'Facebook' :
+            setFbAdded(false);
+            break;
+          default :
+            throw new Error(`Unknown platfrom ${platform}`);
+        }
+      }
     } catch (error) {
       console.error("Error in removing destinations : ", error);
     }
@@ -149,7 +163,7 @@ export default function Destination() {
       toast({
         title : "Youtube is already added as destination!",
         description : "Do you want to remove youtube from destination",
-        action : <ToastAction onClick={() => setYtAdded(false)} altText="Remove">Remove</ToastAction>
+        action : <ToastAction onClick={() => removeDestinations("Youtube")} altText="Remove">Remove</ToastAction>
       });
       return;
     }
@@ -207,7 +221,7 @@ export default function Destination() {
       toast({
         title : "Twitch is already added as destination!",
         description : "Do you want to remove twitch from destination",
-        action : <ToastAction onClick={() => setTwitchAdded(false)} altText="Remove">Remove</ToastAction>
+        action : <ToastAction onClick={() => removeDestinations("Twitch")} altText="Remove">Remove</ToastAction>
       });
       return;
     }
@@ -271,7 +285,7 @@ export default function Destination() {
       toast({
         title : "Facebook is already added as destination!",
         description : "Do you want to remove facebook from destination",
-        action : <ToastAction onClick={() => setFbAdded(false)} altText="Remove">Remove</ToastAction>
+        action : <ToastAction onClick={() => removeDestinations("Facebook")} altText="Remove">Remove</ToastAction>
       });
       return;
     }

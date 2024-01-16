@@ -3,17 +3,20 @@ import { updateTokensInDestination } from "./auth-controllers.js";
 
 export const getDestinations = async (req, res, next) => {
     try {
-        const { user_name, user_email } = req.body;
 
-        const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        console.log(res.locals.jwtData.id);
+
+        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
             console.log(user._id.valueOf());
             return user;
         });
-
+            
         if(!user){
             return res.status(404).send("User does not exist");
         }
 
+        console.log(user);
+            
         const des = await Destination.findOne({ user_id : user._id.valueOf() });
 
         const destinationAdded = {
@@ -31,9 +34,11 @@ export const getDestinations = async (req, res, next) => {
 
 export const removeDestinations = async (req, res, next) => {
     try {
-        const { platform , user_name , user_email } = req.body;
+        const { platform } = req.body;
 
-        const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        console.log(res.locals.jwtData.id);
+
+        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
             console.log(user._id.valueOf());
             return user;
         });

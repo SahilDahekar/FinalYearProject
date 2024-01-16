@@ -3,9 +3,16 @@ import axios from 'axios';
 
 export const getYoutubeTokens = async (req, res, next) => {
     try {
-        const { code , user_name , user_email } = req.body;
+        const { code } = req.body;
 
-        const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        //     console.log(user._id.valueOf());
+        //     return user;
+        // });
+
+        console.log(res.locals.jwtData.id);
+
+        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
             console.log(user._id.valueOf());
             return user;
         });
@@ -41,7 +48,7 @@ export const getYoutubeTokens = async (req, res, next) => {
         }
 
         console.log(tokens.data);
-        console.log("Access Token : " + tokens.data.access_token + "Refresh Token : " + tokens.data.refresh_token);
+        console.log("Access Token : " + tokens.data.access_token + ", Refresh Token : " + tokens.data.refresh_token);
 
         const des = {
             youtube_access_token: tokens.data.access_token,
@@ -49,7 +56,7 @@ export const getYoutubeTokens = async (req, res, next) => {
         };
         
         // Using findOneAndUpdate with upsert option
-        updateTokensInDestination(user._id.valuesOf(), des);
+        updateTokensInDestination(user._id.valueOf(), des);
 
         res.status(200).json(tokens.data);
     } catch (error) {
@@ -59,9 +66,16 @@ export const getYoutubeTokens = async (req, res, next) => {
 
 export const getTwitchTokens = async (req, res, next) => {
     try {
-        const { code , user_name , user_email } = req.body;
+        const { code } = req.body;
 
-        const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        //     console.log(user._id.valueOf());
+        //     return user;
+        // });
+
+        console.log(res.locals.jwtData.id);
+
+        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
             console.log(user._id.valueOf());
             return user;
         });
@@ -115,11 +129,16 @@ export const getTwitchTokens = async (req, res, next) => {
 
 export const getFacebookTokens = async (req, res, next) => {
     try {
-        const { code , user_name , user_email } = req.body;
+        const { code } = req.body;
 
-        console.log(code , user_name , user_email);
+        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        //     console.log(user._id.valueOf());
+        //     return user;
+        // });
 
-        const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
+        console.log(res.locals.jwtData.id);
+
+        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
             console.log(user._id.valueOf());
             return user;
         });

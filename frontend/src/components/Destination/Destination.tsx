@@ -3,9 +3,10 @@ import ToogleCard from './ToogleCard';
 import api from '@/lib/api';
 import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from '../ui/toast';
-import { useEffect, useState } from 'react';
+import { useEffect} from 'react';
 import getUrlParams from '@/helpers/getUrlParams';
 import { useNavigate } from 'react-router-dom';
+import useDestinations from '@/hooks/useDestinations';
 
 type Toggle = {
   title : string;
@@ -14,20 +15,6 @@ type Toggle = {
   callback : () => void;
 }
 
-type User = {
-  name: string;
-  email: string;
-};
-
-type UserAuth = {
-  user: User | null;
-  isLoggedIn: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-};
-
 declare global {
   interface Window {
     google: any;
@@ -35,13 +22,11 @@ declare global {
 }
 
 export default function Destination() {
-  const [ytAdded, setYtAdded] = useState<boolean>(false);
-  const [twitchAdded, setTwitchAdded] = useState<boolean>(false);
-  const [fbAdded, setFbAdded] = useState<boolean>(false);
 
   const { toast } = useToast();
   const auth = useAuth();
   const navigate = useNavigate();
+  const { ytAdded, twitchAdded, fbAdded, removeDestinations, updateDestinations } = useDestinations();
 
   console.log(auth);
 
@@ -61,12 +46,6 @@ export default function Destination() {
         }
       // }, 2000);
       navigate('/destination');
-    }
-  },[]);
-
-  useEffect(() => {
-    if(auth){
-      updateDestinations(auth);
     }
   },[]);
 
@@ -91,69 +70,6 @@ export default function Destination() {
     }
   ];
 
-  async function getDestinations(name : string | undefined, email : string | undefined){
-    const payload = {
-      user_name : name,
-      user_email : email
-    }
-
-    try {
-      const response = await api.post('/destinations/', payload);
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.error("Error in getting destinations : ", error);
-    }
-  }
-
-  async function removeDestinations(platform : string){
-    
-    const payload = {
-      platform : platform,
-      user_name : auth?.user?.name,
-      user_email : auth?.user?.email
-    }
-
-    try {
-      const response = await api.post('/destinations/remove', payload);
-      if(response.data){
-        console.log(response.data);
-        switch(platform){
-          case 'Youtube' : 
-            setYtAdded(false);
-            break;
-          case 'Twitch' :
-            setTwitchAdded(false);
-            break;
-          case 'Facebook' :
-            setFbAdded(false);
-            break;
-          default :
-            throw new Error(`Unknown platfrom ${platform}`);
-        }
-      }
-    } catch (error) {
-      console.error("Error in removing destinations : ", error);
-    }
-  }
-
-  async function updateDestinations(auth : UserAuth){
-    const destination = await getDestinations(auth?.user?.name, auth?.user?.email);
-    if(destination.youtube){
-      setYtAdded(true);
-      console.log("Youtube added from db" , destination.youtube);
-    }
-    if(destination.facebook){
-      setFbAdded(true);
-      console.log("Facebook added from db" , destination.facebook);
-    }
-    if(destination.twitch){
-      setTwitchAdded(true);
-      console.log("Twitch added from db" , destination.twitch);
-    }
-  }
-
-
   //Youtube Auth
   function handleYoutubeAuth(){
     /*global google*/ 
@@ -177,9 +93,7 @@ export default function Destination() {
         callback: (response : any) => {
           console.log('Response : ', response);
           const payload = {
-            code : response.code,
-            user_name : auth?.user?.name,
-            user_email : auth?.user?.email
+            code : response.code
           }
 
           // Send auth code to your backend platform using Axios
@@ -189,7 +103,8 @@ export default function Destination() {
             toast({
               title: "Youtube added as destination",
             });
-            setYtAdded(true);
+            //setYtAdded(true);
+            updateDestinations();
           })
           .catch(function (error) {
             console.error('Error signing in:', error);
@@ -254,15 +169,14 @@ export default function Destination() {
       
     }, 2000);
     const payload = {
-      code : TWITCH_CODE,
-      user_name : auth?.user?.name,
-      user_email : auth?.user?.email
+      code : TWITCH_CODE
     }
 
     api.post('authorize/twitch', payload)
     .then((response) => {
         console.log(response.data);
-        setTwitchAdded(true);
+        //setTwitchAdded(true);
+        updateDestinations();
         toast({
           title: "Twitch added as destination",
         });
@@ -289,7 +203,8 @@ export default function Destination() {
       });
       return;
     }
-    setFbAdded(true);
+    //setFbAdded(true);
+    updateDestinations();
     console.log("Facebook Auth");
     toast({
       title: "Facebook added as destination",

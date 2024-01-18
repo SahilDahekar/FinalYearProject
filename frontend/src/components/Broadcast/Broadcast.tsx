@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '../ui/button'
 import { GrNewWindow } from "react-icons/gr";
 import {
@@ -12,8 +12,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useAuth } from '@/context/AuthContext';
 import useDestinations from '@/hooks/useDestinations';
 import BroadcastForm from '../BroadcastForm/BroadcastForm';
+import api from '@/lib/api';
+import BroadcastItem from './BroadcastItem';
 
 function Broadcast() {
+  const [broadcast, setBroadcast] = useState([]);
   const [value, setValue] = useState<string[]>([]);
   const [curr, setCurr] = useState<string>("");
   const auth = useAuth();
@@ -29,6 +32,21 @@ function Broadcast() {
       setCurr("");
     } 
   }, [value]);
+
+  const getBroadcast = useCallback(async () => {
+    try {
+      const response = await api.get('/broadcast/');
+      const data = response.data;
+      setBroadcast(data);
+    } catch (error) {
+      console.error('Error fetching broadcasts:', error);
+    }
+  },[])
+  
+  useEffect(() => {
+    getBroadcast();
+  }, [])
+  
 
   return (
     <div className='p-6'>
@@ -56,11 +74,17 @@ function Broadcast() {
               </ToggleGroupItem>
             </ToggleGroup>
             <div>
-              <BroadcastForm platforms={value} currentPlatform={curr} check={check}/>
+              <BroadcastForm platforms={value} currentPlatform={curr} check={check} getBroadcast={getBroadcast}/>
             </div>
           </DialogContent>
         </Dialog>
-
+        <div className='flex flex-col gap-3'>
+          {
+            broadcast.map((item : any) => {
+              return <BroadcastItem key={item.id} id={item.id} yt_title={item.yt_title} twitch_title={item.twitch_title} fb_title={item.fb_title}/>
+            })
+          }
+        </div>
     </div>
   )
 }

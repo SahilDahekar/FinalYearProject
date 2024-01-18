@@ -30,6 +30,7 @@ type BroadcastFromProps = {
     platforms : string[],
     currentPlatform : string,
     check : () => void,
+    getBroadcast : () => void,
 }
 
 const baseSchema = z.object({
@@ -48,7 +49,7 @@ const baseSchema = z.object({
     })
 }).partial();
 
-function BroadcastForm({ platforms , currentPlatform, check } : BroadcastFromProps) {
+function BroadcastForm({ platforms , currentPlatform, check, getBroadcast } : BroadcastFromProps) {
 
     const navigate = useNavigate();
     const { toast } = useToast();
@@ -127,7 +128,7 @@ function BroadcastForm({ platforms , currentPlatform, check } : BroadcastFromPro
             toast({
                 title : "Broadcast Added Successfully !"
             })
-            navigate('/broadcast');
+            getBroadcast();
         } catch (error) {
             console.log(error);
             toast({

@@ -5,11 +5,6 @@ export const getYoutubeTokens = async (req, res, next) => {
     try {
         const { code } = req.body;
 
-        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
-        //     console.log(user._id.valueOf());
-        //     return user;
-        // });
-
         console.log(res.locals.jwtData.id);
 
         const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
@@ -68,11 +63,6 @@ export const getTwitchTokens = async (req, res, next) => {
     try {
         const { code } = req.body;
 
-        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
-        //     console.log(user._id.valueOf());
-        //     return user;
-        // });
-
         console.log(res.locals.jwtData.id);
 
         const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
@@ -130,11 +120,6 @@ export const getTwitchTokens = async (req, res, next) => {
 export const getFacebookTokens = async (req, res, next) => {
     try {
         const { code } = req.body;
-
-        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
-        //     console.log(user._id.valueOf());
-        //     return user;
-        // });
 
         console.log(res.locals.jwtData.id);
 

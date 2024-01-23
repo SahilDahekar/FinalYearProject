@@ -224,7 +224,7 @@ export default function Destination() {
 
           console.log(payload);
 
-          api.post('authorize/twitch', payload)
+          api.post('authorize/fb', payload)
           .then((response) => {
               console.log(response.data);
               toast({

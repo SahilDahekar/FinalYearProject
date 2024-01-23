@@ -18,6 +18,7 @@ type Toggle = {
 declare global {
   interface Window {
     google: any;
+    FB: any;
   }
 }
 
@@ -35,16 +36,14 @@ export default function Destination() {
 
   useEffect(() => {
     if(window.location.href.includes('?code')){
-      console.log("Inside if condition useEffect");
-      console.log(window.location.href);
+      // console.log("Inside if condition useEffect");
+      // console.log(window.location.href);
       const code = getUrlParams('code');
-      console.log("Found Twitch code", code);
-      // setTimeout(() => {
-        if(code){
-          sendTwitchCode(code);
-          console.log("Code sent successfully");
-        }
-      // }, 2000);
+      // console.log("Found Twitch code", code);
+      if(code){
+        sendTwitchCode(code);
+        // console.log("Code sent successfully");
+      }
       navigate('/destination');
     }
   },[]);
@@ -175,11 +174,10 @@ export default function Destination() {
     api.post('authorize/twitch', payload)
     .then((response) => {
         console.log(response.data);
-        //setTwitchAdded(true);
-        updateDestinations();
         toast({
           title: "Twitch added as destination",
         });
+        updateDestinations();
     })
     .catch((error) => {
       console.error('Error signing in:', error);
@@ -195,6 +193,9 @@ export default function Destination() {
 
   //Facebook Auth
   function handleFacebookAuth(){
+
+    console.log("Inside Facebook Auth");
+
     if(fbAdded){
       toast({
         title : "Facebook is already added as destination!",
@@ -203,12 +204,50 @@ export default function Destination() {
       });
       return;
     }
-    //setFbAdded(true);
-    updateDestinations();
-    console.log("Facebook Auth");
-    toast({
-      title: "Facebook added as destination",
-    });
+
+    /*global FB*/ 
+    if(window.FB){
+      window.FB.getLoginStatus(function (response : any) {
+        console.log(response);
+      })
+      window.FB.login(
+        function (response : any) {
+          console.log(response);
+          console.log('FB access token: ', response.authResponse.accessToken);
+          const facebookAccessToken = response.authResponse.accessToken;
+          const facebookUserId = response.authResponse.userID;
+
+          const payload = {
+            fb_access_token: facebookAccessToken,
+            fb_user_id: facebookUserId
+          }
+
+          console.log(payload);
+
+          api.post('authorize/twitch', payload)
+          .then((response) => {
+              console.log(response.data);
+              toast({
+                title: "Facebook added as destination",
+              });
+              updateDestinations();
+          })
+          .catch((error) => {
+            console.error('Error signing in:', error);
+            toast({
+              variant: "destructive",
+              title: "Uh oh! Something went wrong.",
+              description: "There was a problem with your request.",
+              action: <ToastAction onClick={handleFacebookAuth} altText="Try again">Try again</ToastAction>,
+            });
+          });
+        },
+        { scope: 'email, publish_video, public_profile', auth_type: 'rerequest' }
+      )
+    }
+    else {
+      console.log("Facebook not found");
+    }
   }
 
   return (

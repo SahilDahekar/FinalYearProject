@@ -29,7 +29,7 @@ function BroadcastItem({
             { fb_title && <Badge className='bg-blue-600'>Facebook</Badge>}
           </div>
         </div>
-        <div>
+        <div className="self-center">
           <Button asChild>
             <Link to={`/studio/${id}`}>Go Live</Link>
           </Button>

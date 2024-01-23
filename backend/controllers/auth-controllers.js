@@ -5,11 +5,6 @@ export const getYoutubeTokens = async (req, res, next) => {
     try {
         const { code } = req.body;
 
-        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
-        //     console.log(user._id.valueOf());
-        //     return user;
-        // });
-
         console.log(res.locals.jwtData.id);
 
         const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
@@ -68,11 +63,6 @@ export const getTwitchTokens = async (req, res, next) => {
     try {
         const { code } = req.body;
 
-        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
-        //     console.log(user._id.valueOf());
-        //     return user;
-        // });
-
         console.log(res.locals.jwtData.id);
 
         const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
@@ -129,12 +119,7 @@ export const getTwitchTokens = async (req, res, next) => {
 
 export const getFacebookTokens = async (req, res, next) => {
     try {
-        const { code } = req.body;
-
-        // const user = await User.findOne({ name : user_name, email : user_email}).lean().then( user => {
-        //     console.log(user._id.valueOf());
-        //     return user;
-        // });
+        const { fb_access_token , fb_user_id } = req.body;
 
         console.log(res.locals.jwtData.id);
 
@@ -149,11 +134,28 @@ export const getFacebookTokens = async (req, res, next) => {
 
         console.log(user);
 
-        if(!code){
+        if(!fb_access_token){
             return res.status(404).send("Code not found");
         }
 
-        console.log(code);
+        console.log("Facebook Access token : " + fb_access_token + "\nFacebook User Id : " + fb_user_id);
+
+        const tokens = await axios.get(
+            `https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${fb_access_token}`
+        )
+
+        console.log(tokens.data);
+        console.log(tokens.data.access_token);
+
+        const des = {
+            fb_user_id : fb_user_id,
+            fb_access_token : fb_access_token,
+            fb_long_access_token : tokens.data.access_token
+        }
+
+        updateTokensInDestination(user._id.valueOf(), des);
+
+        res.status(200).json(tokens.data);
 
     } catch (error) {
         return res.status(404).json({ message: "error", cause: error.message });

@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 // Configure CORS to allow only requests from port 5173
+// Change URL to https://localhost:5173 if using https
 const corsOptions = {
     origin: 'http://localhost:5173',  // Replace with your specific origin
     credentials : true,

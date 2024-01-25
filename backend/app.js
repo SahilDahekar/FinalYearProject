@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 // Configure CORS to allow only requests from port 5173
 const corsOptions = {
-    origin: 'http://localhost:5173',  // Replace with your specific origin
+    origin: 'https://localhost:5173',  // Replace with your specific origin
     credentials : true,
     optionsSuccessStatus: 200,
 };

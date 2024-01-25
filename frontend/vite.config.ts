@@ -10,17 +10,18 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    https: {
-      key: '/home/sahil/server.key',
-      cert: '/home/sahil/server.crt',
-    },
-    proxy: {
-      '/backend': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/backend/, '/api'),
-      },
-    },
-  },
+  // While adding https remember to change key and cert parameter paths under server -> https to path of your certificate and key.
+  // server: {
+  //   https: {
+  //     key: '/home/sahil/server.key',
+  //     cert: '/home/sahil/server.crt',
+  //   },
+  //   proxy: {
+  //     '/backend': {
+  //       target: 'http://localhost:8000',
+  //       changeOrigin: true,
+  //       rewrite: (path) => path.replace(/^\/backend/, '/api'),
+  //     },
+  //   },
+  // },
 })

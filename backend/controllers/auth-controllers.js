@@ -143,28 +143,28 @@ export const getFacebookTokens = async (req, res, next) => {
         const tokens = await axios.get(
             `https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_APP_ID}&client_secret=${process.env.FACEBOOK_APP_SECRET}&fb_exchange_token=${fb_access_token}`
         )
-        .then((res) => {
-            console.log(res);
-            return res.data;
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        // .then((res) => {
+        //     console.log(res);
+        //     return res.data;
+        // })
+        // .catch((err) => {
+        //     console.log(err);
+        // })
 
-        console.log(tokens);
-        console.log(tokens.access_token);
+        console.log(tokens.data);
+        console.log(tokens.data.access_token);
 
         const des = {
-            fb_user_id : fb_user_id,
-            fb_access_token : fb_access_token,
-            fb_long_access_token : tokens.access_token
+            facebook_user_id : fb_user_id,
+            facebook_access_token : fb_access_token,
+            facebook_long_access_token : tokens.data.access_token
         }
 
         console.log(des);
 
         updateTokensInDestination(user._id.valueOf(), des);
 
-        res.status(200).json(tokens);
+        res.status(200).json(tokens.data);
 
     } catch (error) {
         return res.status(404).json({ message: "error", cause: error.message });

@@ -4,19 +4,23 @@ import { Button } from '@/components/ui/button'
 import { IoVideocam ,IoKey } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from '@/context/AuthContext';
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster"
 
 function Dashboard() {
     const auth = useAuth();
     const navigate = useNavigate();
     
-    if (!auth?.user) {
-        if (auth?.isLoading) {
-            return <div>Loading..</div>;
-        }
-        return <Navigate to="/" />;
+    if(auth?.isLoading){
+        return <div>Loading..</div>;
     }
+    
+    // if (!auth?.user) {
+    //     if (auth?.isLoading) {
+    //         return <div>Loading..</div>;
+    //     }
+    //     return <Navigate to="/" />;
+    // }
 
     return (
         <div className='h-screen'>

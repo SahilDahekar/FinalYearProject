@@ -75,6 +75,34 @@ export const getBroadcasts = async (req, res , next) => {
     }
 }
 
+export const removeBroadcast = async (req, res , next) => {
+    try {
+        const { broadcast_id } = req.body;
+
+        console.log(res.locals.jwtData.id);
+
+        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
+            console.log(user._id.valueOf());
+            return user;
+        });
+            
+        if(!user){
+            return res.status(404).send("User does not exist");
+        }
+
+        console.log(user);
+
+        deleteBroadcast(user._id.valueOf(), broadcast_id);
+
+        res.status(200).json({
+            message: "success"
+        });
+
+    } catch (error) {
+        return res.status(404).json({ message: "error", cause:error.message });
+    }
+}
+
 export const updateBroadcastDetails = async (userId, detailsObj) => {
     const filter = { user_id: userId };
     const update = { $set: detailsObj };
@@ -87,12 +115,17 @@ export const updateBroadcastDetails = async (userId, detailsObj) => {
 }
 
 export const addBroadcastDetails = async (userId, detailsObj) => {
-    // Add the user_id to the details object
+
     detailsObj.user_id = userId;
 
-    // Use the create method to add a new entry
     const broadcast = await Broadcast.create(detailsObj);
 
     console.log('Broadcast:\n', broadcast);
+    return broadcast;
+}
+
+export const deleteBroadcast = async (userId, broadcastId) => {
+
+    const broadcast = await Broadcast.deleteOne({ user_id : userId, _id : broadcastId });
     return broadcast;
 }

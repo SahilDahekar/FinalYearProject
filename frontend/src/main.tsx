@@ -11,13 +11,18 @@ import Broadcast from './components/Broadcast/Broadcast.tsx'
 import Destination from './components/Destination/Destination.tsx'
 import Auth from './pages/Auth/Auth.tsx'
 import { AuthProvider } from './context/AuthContext.tsx'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/'>
       <Route path='' element={<App/>}/>
       <Route path='about' element={<About/>}/>
-      <Route element={<Dashboard />}>
+      <Route element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      }>
         <Route
           path="broadcast"
           element={<Broadcast />}

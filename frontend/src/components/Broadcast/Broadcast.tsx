@@ -33,6 +33,23 @@ function Broadcast() {
     } 
   }, [value]);
 
+  const removeBroadcast = useCallback(async (id : number) => {
+    
+    const payload = {
+      broadcast_id : id,
+    }
+
+    try {
+      const response = await api.post('/broadcast/remove', payload);
+      const data = response.data;
+      console.log(data);
+      getBroadcast();
+    } catch (error) {
+      console.error('Error deleting broadcast :' , error);
+    }
+
+  },[]);
+
   const getBroadcast = useCallback(async () => {
     try {
       const response = await api.get('/broadcast/');
@@ -81,7 +98,7 @@ function Broadcast() {
         <div className='flex flex-col gap-3'>
           {
             broadcast.map((item : any) => {
-              return <BroadcastItem key={item.id} id={item.id} yt_title={item.yt_title} twitch_title={item.twitch_title} fb_title={item.fb_title}/>
+              return <BroadcastItem key={item.id} id={item.id} yt_title={item.yt_title} twitch_title={item.twitch_title} fb_title={item.fb_title} removeBroadcast={removeBroadcast}/>
             })
           }
         </div>

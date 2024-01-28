@@ -49,9 +49,6 @@ function Login() {
         try {
           await auth?.login(email, password);
           setIsLoading(false);
-          toast({
-            title : `Logged in as ${email}`
-          })
         //   navigate("/broadcast");
         } catch (error) {
           console.log(error);
@@ -67,6 +64,9 @@ function Login() {
     useEffect(()=>{
       if(auth?.user){
         setTimeout(()=>{
+            toast({
+                title : `Logged in as ${auth?.user?.name}`
+            })
             navigate("/broadcast");
         }, 500);
       }

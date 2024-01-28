@@ -33,14 +33,10 @@ const formSchema = z.object({
 
 function Register() {
     const auth = useAuth();
-    const { toast } = useToast();
-    if (!auth) {
-        // Handle the case when auth is null
-        return <div>Loading...</div>; // or any other fallback UI/UX
-    }
-    console.log(auth);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
+    const { toast } = useToast();
+    console.log(auth);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -59,7 +55,7 @@ function Register() {
         try {
             await auth?.signup(name, email, password);
             toast({
-                title : `Logged in as ${email}`
+                title : `Logged in as ${name}`
             });
             setIsLoading(false);
           } catch (error) {
@@ -77,6 +73,9 @@ function Register() {
     useEffect(()=>{
       if(auth?.user){
         setTimeout(() => {
+            toast({
+                title : `Logged in as ${auth?.user?.name}`
+            })
             navigate("/broadcast");
         }, 500);
       }

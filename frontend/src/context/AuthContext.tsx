@@ -11,6 +11,7 @@ import {
   logoutUser,
   signupUser,
 } from "../helpers/api-communicator";
+import Loader from "@/components/Loader/Loader";
 
 type User = {
   name: string;
@@ -32,12 +33,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   async function checkStatus() {
-    const data = await checkAuthStatus();
-    if (data) {
-      setUser({ email: data.email, name: data.name });
-      setIsLoggedIn(true);
+    try {
+      const data = await checkAuthStatus();
+      if (data) {
+        setUser({ email: data.email, name: data.name });
+        setIsLoggedIn(true);
+      }
+    } catch (error) {
+      console.log("Login failed please try again !!!");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -67,9 +73,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await logoutUser();
     setIsLoggedIn(false);
     setUser(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
   };
 
   const value = {
@@ -80,7 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     logout,
     signup,
   };
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return isLoading ? <Loader /> : (
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

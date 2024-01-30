@@ -103,6 +103,55 @@ export const removeBroadcast = async (req, res , next) => {
     }
 }
 
+export const startBroadcast = async (req, res, next) => {
+    try {
+        // Write Logic to start broadcast based on broadcast id and selected platforms
+        const { broadcast_id } = req.body;
+
+        console.log(res.locals.jwtData.id);
+
+        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
+            console.log(user._id.valueOf());
+            return user;
+        });
+            
+        if(!user){
+            return res.status(404).send("User does not exist");
+        }
+
+        console.log(user);
+
+        const broadcast = await Broadcast.findOne(user._id.valueOf(), broadcast_id);
+
+        const result = await Promise.all([
+            broadcastToYoutube(),
+            broadcastToTwitch(),
+            broadcastToFacebook(),
+        ]);
+
+        res.status(200).json({
+            message: "You are live now!!",
+            broadcast: broadcast,
+            result: result
+
+        })
+    } catch (error) {
+        res.status(404).json({ message: "error", cause: error.message});
+    }
+}
+
+const broadcastToYoutube = async () => {
+    // Write logic related to broadcasting to Youtube
+}
+
+const broadcastToTwitch = async () => {
+    // Write logic related to broadcasting to Twitch
+}
+
+const broadcastToFacebook = async () => {
+    // Write logic related to broadcasting to Facebook
+}
+
 export const updateBroadcastDetails = async (userId, detailsObj) => {
     const filter = { user_id: userId };
     const update = { $set: detailsObj };
@@ -127,5 +176,10 @@ export const addBroadcastDetails = async (userId, detailsObj) => {
 export const deleteBroadcast = async (userId, broadcastId) => {
 
     const broadcast = await Broadcast.deleteOne({ user_id : userId, _id : broadcastId });
+    return broadcast;
+}
+
+export const findBroadcast = async (userId, broadcastId) => {
+    const broadcast = await Broadcast.findOne({ user_id : userId, _id : broadcastId });
     return broadcast;
 }

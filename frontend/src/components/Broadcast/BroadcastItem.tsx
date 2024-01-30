@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import api from "@/lib/api";
+
 
 type BroadcastitemProps = {
     id : number,
@@ -22,6 +24,21 @@ function BroadcastItem({
     removeBroadcast
  } : BroadcastitemProps) {
 
+  const navigate = useNavigate();
+
+  const handleStudio = async() => {
+    try {
+      // Make backend request to fetch streamurls and also additional settings
+      const response = await api.post('');
+      const data = response.data;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      navigate(`/studio/${id}`);
+    }
+  };
+
   return (
     <div className='border-2 border-border rounded-md p-4 flex justify-between gap-2 max-w-2xl'>
         <div className="flex flex-col gap-2">
@@ -33,8 +50,8 @@ function BroadcastItem({
           </div>
         </div>
         <div className="self-center flex gap-2">
-          <Button asChild>
-            <Link to={`/studio/${id}`}>Go Live</Link>
+          <Button onClick={handleStudio}>
+            Go Live
           </Button>
           <Button variant="outline" onClick={() => removeBroadcast(id)}>
             Remove

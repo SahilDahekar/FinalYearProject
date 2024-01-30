@@ -10,5 +10,4 @@ appRouter.use('/authorize', authRouter);
 appRouter.use('/destinations', destinationRouter);
 appRouter.use('/broadcast', broadcastRouter);
 
-
 export default appRouter

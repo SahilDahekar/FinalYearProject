@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from '@/components/ui/button'
 import { IoVideocam ,IoKey } from "react-icons/io5";
@@ -33,12 +33,16 @@ function Dashboard() {
             </div>
             <div className='flex h-[90%]'>
                 <div className='w-1/6 gap-2 flex flex-col p-2'>
-                    <Button className='text-base' asChild variant="ghost" size='lg'>
-                        <Link to="/broadcast"><IoVideocam className='mr-2'/>Broadcast</Link>
-                    </Button>
-                    <Button className='text-base' asChild variant="ghost" size='lg'>
-                        <Link to="/destination"><IoKey className='mr-2'/>Destination</Link>
-                    </Button>
+                    <NavLink className={(props) => (props.isActive ? 'bg-secondary rounded-md' : '')} to="/broadcast">
+                        <Button className='text-base w-full' variant="ghost" size='lg'>
+                            <IoVideocam className='mr-2'/> Broadcast
+                        </Button>
+                    </NavLink>
+                    <NavLink className={(props) => (props.isActive ? 'bg-secondary rounded-md' : '')} to="/destination">
+                        <Button className='text-base w-full' variant="ghost" size='lg'>
+                            <IoKey className='mr-2'/> Destination
+                        </Button>
+                    </NavLink>
                     <Button onClick={handleLogout} className='text-base mt-auto' variant="default" size='lg'>
                         <TbLogout2 className='mr-2'/> Sign Out
                     </Button>
@@ -52,10 +56,3 @@ function Dashboard() {
 }
 
 export default Dashboard
-
-//try this later
-{/* <NavLink className={(props) => (props.isActive ? 'bg-secondary rounded-md' : '')} to="/broadcast">
-    <Button className='text-base w-full' variant="ghost" size='lg'>
-        <IoVideocam className='mr-2'/> Broadcast
-    </Button>
-</NavLink> */}

@@ -1,21 +1,14 @@
-import { User, Destination } from "../models/schema.js";
+import { Destination } from "../models/schema.js";
 import axios from 'axios';
 
 export const getYoutubeTokens = async (req, res, next) => {
     try {
         const { code } = req.body;
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
-
+        console.log(user._id.valueOf());
+        console.log(user);
 
         if(!code){
             return res.status(404).send("Code not found");
@@ -63,17 +56,9 @@ export const getTwitchTokens = async (req, res, next) => {
     try {
         const { code } = req.body;
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
-
+        console.log(user._id.valueOf());
         console.log(user);
 
         if(!code){
@@ -121,17 +106,9 @@ export const getFacebookTokens = async (req, res, next) => {
     try {
         const { fb_access_token , fb_user_id } = req.body;
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
-
+        console.log(user._id.valueOf());
         console.log(user);
 
         if(!fb_access_token){

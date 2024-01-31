@@ -1,4 +1,4 @@
-import { User, Broadcast } from "../models/schema.js";
+import { Broadcast } from "../models/schema.js";
 
 export const setBroadcastDetails = async(req, res, next) => {
     try {
@@ -6,17 +6,9 @@ export const setBroadcastDetails = async(req, res, next) => {
 
         console.log("\nYt title : ", yt_title,"\nYt description : ", yt_description,"\nYt Policy : ", yt_policy,"\n\nTwitch title : ", twitch_title,"\n\nFb title : ", fb_title);
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-            
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
-
+        console.log(user._id.valueOf());
         console.log(user);
 
         const details = {
@@ -40,17 +32,10 @@ export const setBroadcastDetails = async(req, res, next) => {
 
 export const getBroadcasts = async (req, res , next) => {
     try {
-        console.log(res.locals.jwtData.id);
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-            
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
+        const user = res.locals.user;
 
+        console.log(user._id.valueOf());
         console.log(user);
 
         const broadcasts = await Broadcast.find({user_id : user._id.valueOf()});
@@ -79,17 +64,9 @@ export const removeBroadcast = async (req, res , next) => {
     try {
         const { broadcast_id } = req.body;
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-            
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
-
+        console.log(user._id.valueOf());
         console.log(user);
 
         deleteBroadcast(user._id.valueOf(), broadcast_id);
@@ -108,17 +85,9 @@ export const startBroadcast = async (req, res, next) => {
         // Write Logic to start broadcast based on broadcast id and selected platforms
         const { broadcast_id } = req.body;
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-            
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
-
+        console.log(user._id.valueOf());
         console.log(user);
 
         const broadcast = await Broadcast.findOne(user._id.valueOf(), broadcast_id);

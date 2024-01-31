@@ -1,20 +1,12 @@
-import { User, Destination } from "../models/schema.js";
+import { Destination } from "../models/schema.js";
 import { updateTokensInDestination } from "./auth-controllers.js";
 
 export const getDestinations = async (req, res, next) => {
     try {
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-            
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
-
+        console.log(user._id.valueOf());
         console.log(user);
             
         const des = await Destination.findOne({ user_id : user._id.valueOf() });
@@ -36,16 +28,10 @@ export const removeDestinations = async (req, res, next) => {
     try {
         const { platform } = req.body;
 
-        console.log(res.locals.jwtData.id);
+        const user = res.locals.user;
 
-        const user = await User.findById(res.locals.jwtData.id).lean().then( user => {
-            console.log(user._id.valueOf());
-            return user;
-        });
-
-        if(!user){
-            return res.status(404).send("User does not exist");
-        }
+        console.log(user._id.valueOf());
+        console.log(user);
 
         let tokenObj;
 

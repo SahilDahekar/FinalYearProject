@@ -8,24 +8,26 @@ export const createToken = (id, email, expiresIn) => {
     return token;
 };
 
-export const verifyToken = async (req, res, next) => {
-  const token = req.signedCookies[`${COOKIE_NAME}`];
+export const verifyToken = (req, res, next) => {
+  try {
+    const token = req.signedCookies[`${COOKIE_NAME}`];
 
-  if (!token || token.trim() === "") {
-    return res.status(401).json({ message: "Token Not Received" });
+    if (!token || token.trim() === "") {
+      return res.status(401).json({ message: "Token Not Received" });
+    }
+
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    res.locals.jwtData = decodedToken;
+    return next();
+
+  } catch (err) {
+
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token Expired" });
+    } else {
+      return res.status(401).json({ message: "Invalid Token" });
+    }
+
   }
-
-  return new Promise((resolve, reject) => {
-    return jwt.verify(token, process.env.JWT_SECRET, (err, success) => {
-      if (err) {
-        reject(err.message);
-        return res.status(401).json({ message: "Token Expired" });
-      } else {
-        resolve();
-        res.locals.jwtData = success;
-        return next();
-      }
-    });
-  });
 };
   

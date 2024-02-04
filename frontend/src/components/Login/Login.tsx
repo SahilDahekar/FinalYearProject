@@ -14,6 +14,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 const formSchema = z.object({
     email: z.string().email().min(2, {
@@ -24,10 +26,10 @@ const formSchema = z.object({
     }),
 });
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "react-hot-toast";
 
 function Login() {
     const auth = useAuth();
+    const { toast } = useToast();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
 
@@ -45,20 +47,28 @@ function Login() {
         const email = values.email;
         const password = values.password;
         try {
-          toast.loading("Signing In", { id: "login" });
           await auth?.login(email, password);
           setIsLoading(false);
-          toast.success("Signed In Successfully", { id: "login" });
-          navigate("/broadcast");
+        //   navigate("/broadcast");
         } catch (error) {
           console.log(error);
           setIsLoading(false);
-          toast.error("Signing In Failed", { id: "login" });
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request.",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          })
         }
     }
     useEffect(()=>{
       if(auth?.user){
-        navigate("/broadcast")
+        setTimeout(()=>{
+            toast({
+                title : `Logged in as ${auth?.user?.name}`
+            })
+            navigate("/broadcast");
+        }, 500);
       }
     },[auth])
 
@@ -95,7 +105,7 @@ function Login() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" disabled={isLoading}>
+                    <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : null}{" "}

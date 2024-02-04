@@ -9,7 +9,7 @@ export const getAllUsers = async (req, res, next) => {
         const users = await User.find();
         return res.status(200).json({ message: "ok", users });
     } catch (error) {
-        return res.status(200).json({ message: "error", cause: error.message });
+        return res.status(404).json({ message: "error", cause: error.message });
     }
 };
 
@@ -60,7 +60,7 @@ export const usersignUp = async (req, res, next) => {
 
         return res.status(201).json({ message: "ok", id: user._id.toString() });
     } catch (error) {
-        return res.status(200).json({ message: "error", cause: error.message });
+        return res.status(404).json({ message: "error", cause: error.message });
     }
 };
 
@@ -110,7 +110,7 @@ export const userLogin = async (req, res, next) => {
 
         return res.status(200).json({ message: "ok", id: user._id.toString() });
     } catch (error) {
-        return res.status(200).json({ message: "error", cause: error.message });
+        return res.status(404).json({ message: "error", cause: error.message });
     }
 };
 
@@ -135,7 +135,7 @@ export const verifyUser = async (req, res, next) => {
     } catch (error) {
         resolve();
         console.log(error);
-        return res.status(200).json({ message: "ERROR", cause: error.message });
+        return res.status(404).json({ message: "ERROR", cause: error.message });
          
     }
 };
@@ -167,6 +167,6 @@ export const userLogout = async (req, res, next) => {
             .json({ message: "OK", name: user.name, email: user.email });
     } catch (error) {
         console.log(error);
-        return res.status(200).json({ message: "ERROR", cause: error.message });
+        return res.status(404).json({ message: "ERROR", cause: error.message });
     }
 };

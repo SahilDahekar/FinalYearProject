@@ -6,7 +6,7 @@ import WebSocket from './utils/websocket.js';
 WebSocket();
 connectToDatabase()
     .then(() => {
-        app.listen(8000, () => console.log("server started and connected to db at port 8000"));
+        app.listen(8000, () => console.log("server started at port 8000"));
     })
     .catch((err) => console.log(err));
 

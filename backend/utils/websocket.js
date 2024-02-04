@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import { ChildProcess, spawn } from 'child_process';
 import { inputSettings , twitchSettings , youtubeSettings} from "./ffmpeg.js";
+<<<<<<< HEAD
 //import { createWorker } from './worker.js';
 import config  from './soup_config.js';
 import cors  from "cors";
@@ -45,6 +46,8 @@ const createWorker = async () => {
   
   return worker
 }
+=======
+>>>>>>> origin
 
 worker = createWorker();
 const WebSocket=(()=>{

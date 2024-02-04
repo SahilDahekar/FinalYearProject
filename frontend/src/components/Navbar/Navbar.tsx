@@ -1,11 +1,21 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '../ui/use-toast';
 
 
 function Navbar() {
     const auth = useAuth();
+    const { toast } = useToast();
+
     console.log(auth);
+
+    function handleLogout(){
+        auth?.logout();
+        toast({
+            title : `Logged out ${auth?.user?.name}`
+        })
+    }
 
     const list = [
         {
@@ -46,7 +56,7 @@ function Navbar() {
                     </Button>);
                 } else if (item.name === 'Logout') {
                     return (
-                    <Button onClick={() => auth?.logout()} className='font-bold' key={item.name} asChild>
+                    <Button onClick={handleLogout} className='font-bold' key={item.name} asChild>
                         <Link to={item.link}>{item.name}</Link>
                     </Button>);
                 }

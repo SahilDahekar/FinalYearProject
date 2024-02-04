@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-
 function Auth() {
   return (
     <div className='flex h-screen'>

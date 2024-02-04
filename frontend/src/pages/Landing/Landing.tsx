@@ -12,7 +12,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { useAuth } from '@/context/AuthContext';
 
 
 type Feature = {
@@ -22,10 +21,6 @@ type Feature = {
 }
 
 function Landing() {
-
-  const auth = useAuth();
-
-  console.log(auth);
 
   const features : Feature[] = [
     {

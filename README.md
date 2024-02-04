@@ -1,4 +1,6 @@
+
 # StreamSync : Advancing Streaming through webrtc and varied protocols 
+![image](https://github.com/SahilDahekar/FinalYearProject/assets/97726887/b3eb714c-2248-42c8-acfb-249d6495a866)
 
 This is the repo for BE final year project **Team No. 30** 
 `StreamSync` is a livestreaming platform that allows users to stream directly form their browser.
@@ -34,19 +36,22 @@ git clone https://github.com/<username>/FinalYearProject.git
   ```
  touch .env
  ```
- 6. Start the server
+ 6. Create a MongodB instance either locally or using MongodB Atlas
+ > You can also use docker mongo container to spin up a local mongodB instance.
+ 
+ 7. Start the server
   ```
  npm start
  ```
- 7. Change directory to `frontend`
+ 8. Change directory to `frontend`
   ```
  cd ../frontend
  ```
- 8. Install packages and dependencies
+ 9. Install packages and dependencies
   ```
  npm i
  ```
- 9. Start the frontend
+ 10. Start the frontend
   ```
  npm run dev
  ```
@@ -54,14 +59,14 @@ git clone https://github.com/<username>/FinalYearProject.git
 ## Tasks To do
 
  - [x] Display Single User Stream with Screen Share , cam , mic controls.
- - [x] Write Backend to Stream this to `Youtube` using backend ( use `websockets` and `ffmpeg` )
- - [x] Create Landing and Dashboard Pages in Frontend
- - [x] Add Auth Functionality Keeping in mind different API integration optimization ( `OAuth` , `Clerk` , `Custom using Jwt and cookies` )
- - [x] Add Support for other Streming platforms ( `Twitch` , `Facebook Live` )
- - [x] Find alternatives for `MediaRecorder` to reduce lag ( current lag is `12 sec` when expected is `5 - 10 sec` on `Twitch` )
+ - [x] Write Backend to Stream this to `Youtube` using backend ( use `websockets` and `ffmpeg` ) .
+ - [x] Create Landing and Dashboard Pages in Frontend .
+ - [x] Add Auth Functionality Keeping in mind different API integration optimization ( `OAuth` , `Clerk` , `Custom using Jwt and cookies` ) .
+ - [x] Add Support for other Streming platforms ( `Twitch` , `Facebook Live` ) .
+ - [x] Find alternatives for `MediaRecorder` to reduce lag ( current lag is `12 sec` when expected is `5 - 10 sec` on `Twitch` ) .
  - [x] Add Canvas and stream it to backend via WebSockets.
  - [ ] Add Custom Layout Controls Functionality.
- - [ ] Add Support for Multi User Stream with a main Stream been admin host
+ - [x] Add Support for Multi User Stream via `MediaSoup` with a main Stream been admin host.
  - [ ] Migrate to `NextJs` and containerize the project.
  - [ ] Deploy
 

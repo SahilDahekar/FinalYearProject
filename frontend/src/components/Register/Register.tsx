@@ -15,9 +15,9 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {toast} from 'react-hot-toast';
 import { useAuth } from "@/context/AuthContext";
-// import api from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -33,13 +33,10 @@ const formSchema = z.object({
 
 function Register() {
     const auth = useAuth();
-    if (!auth) {
-        // Handle the case when auth is null
-        return <div>Loading...</div>; // or any other fallback UI/UX
-    }
-    console.log(auth);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate();
+    const { toast } = useToast();
+    console.log(auth);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -55,30 +52,32 @@ function Register() {
         const name = values.name;
         const email = values.email;
         const password = values.password;
-        // try {
-        //   toast.loading("Signing Up", { id: "signup" });
-        //   await api.post("/user/signup",{
-        //   name,email,password })
-        //   toast.success("Signed Up Successfully", { id: "signup" });
-        // } catch (error) {
-        //   console.log(error);
-        //   toast.error("Signing Up Failed", { id: "signup" });
-        // }
         try {
-            toast.loading("Signing Up", { id: "signup" });
             await auth?.signup(name, email, password);
-            toast.success("Signed Up Successfully", { id: "signup" });
+            toast({
+                title : `Logged in as ${name}`
+            });
             setIsLoading(false);
           } catch (error) {
             console.log(error);
-            toast.error("Signing Up Failed", { id: "signup" });
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: "There was a problem with your request.",
+                action: <ToastAction altText="Try again">Try again</ToastAction>,
+            });
             setIsLoading(false);
           }
     };
 
     useEffect(()=>{
       if(auth?.user){
-        return navigate("/broadcast")
+        setTimeout(() => {
+            toast({
+                title : `Logged in as ${auth?.user?.name}`
+            })
+            navigate("/broadcast");
+        }, 500);
       }
     },[auth])
 
@@ -130,7 +129,7 @@ function Register() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" disabled={isLoading}>
+                    <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : null}{" "}

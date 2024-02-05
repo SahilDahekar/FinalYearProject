@@ -212,22 +212,6 @@ const Studio = () => {
       const videoParam = { track: userStream?.getVideoTracks()[0],...videoParams };
       audioProducerInstance = await producerTransports.produce(audioParam);
       videoProducerInstance = await producerTransports.produce(videoParam);
-      audioProducerInstance.on('trackended', () => {
-        console.log('audio track ended');
-      });
-  
-      audioProducerInstance.on('transportclose', () => {
-        console.log('audio transport ended');
-      });
-  
-      videoProducerInstance.on('trackended', () => {
-        console.log('video track ended');
-      });
-  
-      videoProducerInstance.on('transportclose', () => {
-        console.log('video transport ended');
-      });
-      
     };
 
 
@@ -263,10 +247,6 @@ const Studio = () => {
         } catch (error) {
           errback(error);
         } 
-      });
-
-      consumerTransport.on('close' , () => {
-          console.log("HM");
       });
       
       connectRecvTransport(consumerTransport, remoteProducerId, params.id);
@@ -309,10 +289,6 @@ const Studio = () => {
         },
       ];
 
-      consumer.on("transportclose",()=>{
-        console.log("Closed");
-      });
-
       const newElem = document.createElement('div');
       newElem.setAttribute('id', `rid-${remoteProducerId}`);
       if (params.kind === 'audio') {
@@ -339,11 +315,11 @@ const Studio = () => {
     producerToClose.consumerTransport.close()
     producerToClose.consumer.close()
 
-  // remove the consumer transport from the list
-  consumerTransports = consumerTransports.filter(transportData => transportData.producerId !== remoteProducerId)
+    // remove the consumer transport from the list
+    consumerTransports = consumerTransports.filter(transportData => transportData.producerId !== remoteProducerId)
 
-  // remove the video div element
-  videoContainer.removeChild(document.getElementById(`rid-${remoteProducerId}`))
+    // remove the video div element
+    videoContainer.removeChild(document.getElementById(`rid-${remoteProducerId}`))
   });
 
 

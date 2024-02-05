@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { ChildProcess, spawn } from 'child_process';
 import { inputSettings , twitchSettings , youtubeSettings} from "./ffmpeg.js";
-<<<<<<< HEAD
+
 //import { createWorker } from './worker.js';
 import config  from './soup_config.js';
 import cors  from "cors";
@@ -46,8 +46,6 @@ const createWorker = async () => {
   
   return worker
 }
-=======
->>>>>>> origin
 
 worker = createWorker();
 const WebSocket=(()=>{
@@ -138,6 +136,7 @@ const WebSocket=(()=>{
             peers = rooms[roomName].peers || []
           } else {
             router1 = await worker.createRouter({ mediaCodecs, })
+            socket.emit('room-start',(roomName));
           }
           
           console.log(`Router ID: ${router1.id}`, peers.length)
@@ -356,8 +355,7 @@ const WebSocket=(()=>{
               }
             })
           }
-        })
-        
+        })        
         socket.on('consumer-resume', async ({ serverConsumerId }) => {
           console.log('consumer resume')
           const { consumer } = consumers.find(consumerData => consumerData.consumer.id === serverConsumerId)

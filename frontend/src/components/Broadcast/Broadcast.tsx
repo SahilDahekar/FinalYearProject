@@ -14,12 +14,14 @@ import useDestinations from '@/hooks/useDestinations';
 import BroadcastForm from '../BroadcastForm/BroadcastForm';
 import api from '@/lib/api';
 import BroadcastItem from './BroadcastItem';
+import { useToast } from '../ui/use-toast';
 
 function Broadcast() {
   const [broadcast, setBroadcast] = useState([]);
   const [value, setValue] = useState<string[]>([]);
   const [curr, setCurr] = useState<string>("");
   const auth = useAuth();
+  const { toast } = useToast();
   const { ytAdded, twitchAdded, fbAdded } = useDestinations();
   console.log(auth);
   console.log(value);
@@ -43,6 +45,9 @@ function Broadcast() {
       const response = await api.post('/broadcast/remove', payload);
       const data = response.data;
       console.log(data);
+      toast({
+        title : `Removed broadcast ${id}`
+      });
       getBroadcast();
     } catch (error) {
       console.error('Error deleting broadcast :' , error);

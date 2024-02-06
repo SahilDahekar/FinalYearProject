@@ -1,4 +1,5 @@
 import { Broadcast } from "../models/schema.js";
+import { nanoid } from 'nanoid';
 
 export const setBroadcastDetails = async(req, res, next) => {
     try {
@@ -22,6 +23,8 @@ export const setBroadcastDetails = async(req, res, next) => {
         console.log(details);
         console.log(user._id);
         const broadcast = await addBroadcastDetails(user._id.valueOf(), details);
+        const studioId = nanoid();
+        console.log(" This is random studio Id : ",studioId);
 
         return res.status(200).json(broadcast);
 

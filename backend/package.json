@@ -26,6 +26,7 @@
     "mediasoup": "^3.13.16",
     "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
+    "nanoid": "^5.0.5",
     "socket.io": "^4.7.3",
     "zod": "^3.22.4"
   }

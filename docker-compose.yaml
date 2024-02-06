@@ -21,6 +21,17 @@ services:
       - database
     env_file:
       - ./backend/.env
+  
+  encoder:
+    build:
+      context: ./encoder
+    ports:
+      - "3000:3000"  
+      - "5001:5001"
+    depends_on:
+      - backend
+    env_file:
+      - ./encoder/.env
 
   database:
     image: mongo

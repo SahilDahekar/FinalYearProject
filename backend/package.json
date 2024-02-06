@@ -5,6 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
+    "dev": "DEBUG=mediasoup:* nodemon index.js",
     "start": "set NODE_ENV=dev && nodemon index.js"
   },
   "keywords": [],
@@ -21,6 +23,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "mediasoup": "^3.13.16",
     "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
     "nanoid": "^5.0.5",

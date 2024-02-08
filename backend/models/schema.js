@@ -35,6 +35,7 @@ const broadcastSchema = new mongoose.Schema({
     fb_destination_url: { type: String },
     twitch_title: { type: String },
     twitch_stream_key: { type: String },
+    studio_id: { type: String },
 },{
     timestamp: true,
 });

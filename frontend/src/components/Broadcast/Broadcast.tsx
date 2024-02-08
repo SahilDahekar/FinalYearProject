@@ -103,7 +103,7 @@ function Broadcast() {
         <div className='flex flex-col gap-3 overflow-y-auto h-[512px] w-3/5 px-3'>
           {
             broadcast.map((item : any) => {
-              return <BroadcastItem key={item.id} id={item.id} yt_title={item.yt_title} twitch_title={item.twitch_title} fb_title={item.fb_title} removeBroadcast={removeBroadcast}/>
+              return <BroadcastItem key={item.id} id={item.id} yt_title={item.yt_title} twitch_title={item.twitch_title} fb_title={item.fb_title} studio_id={item.studio_id} removeBroadcast={removeBroadcast}/>
             })
           }
         </div>

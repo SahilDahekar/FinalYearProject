@@ -11,19 +11,20 @@ export const setBroadcastDetails = async(req, res, next) => {
 
         console.log(user._id.valueOf());
         console.log(user);
-
+        
+        const studioId = nanoid();
         const details = {
             yt_title: yt_title ? yt_title : null,
             yt_description: yt_description ? yt_description : null,
             yt_privacy_policy: yt_policy ? yt_policy : null,
             fb_title: fb_title ? fb_title : null,
             twitch_title: twitch_title ? twitch_title : null,
+            studio_id : studioId,
         }
 
         console.log(details);
         console.log(user._id);
         const broadcast = await addBroadcastDetails(user._id.valueOf(), details);
-        const studioId = nanoid();
         console.log(" This is random studio Id : ",studioId);
 
         return res.status(200).json(broadcast);
@@ -52,7 +53,8 @@ export const getBroadcasts = async (req, res , next) => {
                 yt_description : item.yt_description,
                 yt_policy : item.yt_privacy_policy,
                 twitch_title : item.twitch_title,
-                fb_title : item.fb_title
+                fb_title : item.fb_title,
+                studio_id : item.studio_id,
             }
         })
 

@@ -11,6 +11,7 @@ type BroadcastitemProps = {
     yt_policy? : string,
     twitch_title : string,
     fb_title : string,
+    studio_id : string,
     removeBroadcast : (id : number) => void,
 }
 
@@ -21,6 +22,7 @@ function BroadcastItem({
     yt_policy,
     twitch_title,
     fb_title,
+    studio_id,
     removeBroadcast
  } : BroadcastitemProps) {
 
@@ -35,7 +37,7 @@ function BroadcastItem({
     } catch (error) {
       console.log(error);
     } finally {
-      navigate(`/studio/${id}`);
+      navigate(`/studio/${studio_id}`);
     }
   };
 

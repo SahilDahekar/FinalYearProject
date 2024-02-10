@@ -1,4 +1,4 @@
-import { Broadcast } from "../models/schema.js";
+import { Broadcast, Destination } from "../models/schema.js";
 import { nanoid } from 'nanoid';
 
 export const setBroadcastDetails = async(req, res, next) => {
@@ -126,27 +126,30 @@ const broadcastToFacebook = async () => {
     // Write logic related to broadcasting to Facebook
 }
 
-export const validateTwitchRequest = async (twitchAccessToken) => {
+const validateTwitchRequest = async () => {
     try {
+
+        const user = res.locals.user;
+
+        console.log(user._id.valueOf());
+        console.log(user);
+            
+        const des = await Destination.findOne({ user_id : user._id.valueOf() });
+
+        const token = des.twitch_access_token;
         
         const config = {
-            headers: { Authorization: `Bearer ${twitchAccessToken}` },
+            headers: { Authorization: `Bearer ${token}` },
         }
 
         const response = await axios.get('https://id.twitch.tv/oauth2/validate', config);
-        // .then((res) => {
-        //     return res.data
-        // })
-        // .catch((err) => {
-        //     console.log(err)
-        // })
 
         res.status(200).json(response.data);
 
     } catch (error) {
         res.status(404).json({ message: "error", cause: error.message});
     }
-  }
+}
   
 const getTwitchStreamKey = async (twitchAccessToken, twitchClientId, twitchBroadcasterId) => {
     try {

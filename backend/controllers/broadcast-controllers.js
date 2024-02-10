@@ -126,6 +126,53 @@ const broadcastToFacebook = async () => {
     // Write logic related to broadcasting to Facebook
 }
 
+export const validateTwitchRequest = async (twitchAccessToken) => {
+    try {
+        
+        const config = {
+            headers: { Authorization: `Bearer ${twitchAccessToken}` },
+        }
+
+        const response = await axios.get('https://id.twitch.tv/oauth2/validate', config);
+        // .then((res) => {
+        //     return res.data
+        // })
+        // .catch((err) => {
+        //     console.log(err)
+        // })
+
+        res.status(200).json(response.data);
+
+    } catch (error) {
+        res.status(404).json({ message: "error", cause: error.message});
+    }
+  }
+  
+const getTwitchStreamKey = async (twitchAccessToken, twitchClientId, twitchBroadcasterId) => {
+    try {
+        
+        const config = {
+            headers: {
+            Authorization: `Bearer ${twitchAccessToken}`,
+            'Client-Id': twitchClientId,
+            },
+        }
+    
+        const response = await axios.get(
+            `https://api.twitch.tv/helix/streams/key?broadcaster_id=${twitchBroadcasterId}`,
+            config
+        )
+    
+        const twitchStreamKey = response.data.data[0].stream_key;
+        return res.status(200).json({
+            twitchStreamKey: twitchStreamKey,
+        });
+
+    } catch (error) {
+        res.status(404).json({ message: "error", cause: error.message});
+    }
+}
+
 export const updateBroadcastDetails = async (userId, detailsObj) => {
     const filter = { user_id: userId };
     const update = { $set: detailsObj };

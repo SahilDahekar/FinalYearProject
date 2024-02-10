@@ -1,4 +1,4 @@
-import { Broadcast } from "../models/schema.js";
+import { Broadcast, Destination } from "../models/schema.js";
 import { nanoid } from 'nanoid';
 
 export const setBroadcastDetails = async(req, res, next) => {
@@ -124,6 +124,56 @@ const broadcastToTwitch = async () => {
 
 const broadcastToFacebook = async () => {
     // Write logic related to broadcasting to Facebook
+}
+
+const validateTwitchRequest = async () => {
+    try {
+
+        const user = res.locals.user;
+
+        console.log(user._id.valueOf());
+        console.log(user);
+            
+        const des = await Destination.findOne({ user_id : user._id.valueOf() });
+
+        const token = des.twitch_access_token;
+        
+        const config = {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+
+        const response = await axios.get('https://id.twitch.tv/oauth2/validate', config);
+
+        res.status(200).json(response.data);
+
+    } catch (error) {
+        res.status(404).json({ message: "error", cause: error.message});
+    }
+}
+  
+const getTwitchStreamKey = async (twitchAccessToken, twitchClientId, twitchBroadcasterId) => {
+    try {
+        
+        const config = {
+            headers: {
+            Authorization: `Bearer ${twitchAccessToken}`,
+            'Client-Id': twitchClientId,
+            },
+        }
+    
+        const response = await axios.get(
+            `https://api.twitch.tv/helix/streams/key?broadcaster_id=${twitchBroadcasterId}`,
+            config
+        )
+    
+        const twitchStreamKey = response.data.data[0].stream_key;
+        return res.status(200).json({
+            twitchStreamKey: twitchStreamKey,
+        });
+
+    } catch (error) {
+        res.status(404).json({ message: "error", cause: error.message});
+    }
 }
 
 export const updateBroadcastDetails = async (userId, detailsObj) => {

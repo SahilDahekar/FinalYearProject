@@ -21,7 +21,7 @@ export const createYoutubeBroadcast = async (params) => {
         return {
             message : "Error",
             error : error
-        }
+        };
     }
 }
 
@@ -46,7 +46,7 @@ export const createYoutubeStream = async (params) => {
         return {
             message : "Error",
             error : error
-        }
+        };
     }
 }
 
@@ -66,6 +66,51 @@ export const bindYoutubeBroadcast = async (params) => {
         return {
             message : "Error",
             error : error
-        }
+        };
+    }
+}
+
+export const startYoutubeBroadcast = async (params) => {
+    try {
+        
+        const { config, youtubeBroadcastId } = params;
+
+        const response = await axios.post(
+            `https://youtube.googleapis.com/youtube/v3/liveBroadcasts/transition?broadcastStatus=live&id=${youtubeBroadcastId}&part=id&part=status&key=${process.env.GOOGLE_API_KEY}`,
+            config
+        );
+
+        return {
+            data : response.data,
+            message : "Going Live on YouTube Now!!"
+        };
+    
+    } catch (error) {
+        return {
+            message : "error",
+            error : error
+        };
+    }
+}
+
+export const stopYoutubeBroadcast = async (params) => {
+    try {
+        const { config, youtubeBroadcastId } = params;
+
+        const response = await axios.post(
+            `https://youtube.googleapis.com/youtube/v3/liveBroadcasts/transition?broadcastStatus=complete&id=${youtubeBroadcastId}&part=snippet%2Cstatus&key=${process.env.GOOGLE_API_KEY}`,
+            config
+        );
+
+        return {
+            data : response.data,
+            message : "Ending Live on YouTube Now!!!"
+        };
+
+    } catch (error) {
+        return {
+            message : "error",
+            error : error
+        };
     }
 }

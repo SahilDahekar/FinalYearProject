@@ -1,0 +1,19 @@
+{
+  "name": "encoder",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev": "set NODE_ENV=dev && nodemon app.js",
+    "start" : "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "nodemon": "^3.0.3",
+    "puppeteer": "^21.11.0",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4"
+  }
+}

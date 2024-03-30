@@ -5,6 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "dev": "set NODE_ENV=dev && DEBUG=mediasoup:* nodemon index.js",
     "start": "nodemon index.js"
   },
   "keywords": [],
@@ -14,7 +15,18 @@
     "nodemon": "^3.0.2"
   },
   "dependencies": {
+    "axios": "^1.6.5",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mediasoup": "^3.13.16",
+    "mongoose": "^8.0.3",
+    "morgan": "^1.10.0",
+    "nanoid": "^5.0.5",
+    "socket.io": "^4.7.3",
+    "zod": "^3.22.4"
   }
 }

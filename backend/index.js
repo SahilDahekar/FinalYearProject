@@ -1,17 +1,12 @@
-import dotenv from "dotenv";
-import express from "express";
 
-dotenv.config({
-    path: "./.env"
-});
+import app from './app.js'
+import { connectToDatabase } from './db/connections.js'
+import WebSocket from './utils/websocket.js';
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+WebSocket();
+connectToDatabase()
+    .then(() => {
+        app.listen(8000, () => console.log("server started at port 8000"));
+    })
+    .catch((err) => console.log(err));
 
-app.get("/", (req, res) => {
-    res.send("Stream Sync Backend");
-})
-
-app.listen(PORT, () => {
-    console.log(`Sever listening on port ${PORT}`);
-});

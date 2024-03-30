@@ -2,11 +2,41 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stream Sync</title>
+    <title>StreamSync</title>
+
+    <!-- Google global api script -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Facebook global api script -->
+    <script>
+
+      // Get env variable for facebook app id
+      const FB_APP_ID = '%VITE_FACEBOOK_APP_ID%'
+
+      window.fbAsyncInit = function() {
+        // Initialize the SDK with your app and the Graph API version for your app
+        FB.init({
+          appId   : FB_APP_ID,
+          cookie  : true,
+          xfbml   : true,
+          version : 'v18.0'
+        });
+      };
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk')
+      );
+
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

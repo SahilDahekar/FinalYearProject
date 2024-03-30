@@ -3,11 +3,14 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import Video from '@/components/Video/Video';
 import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa6";
+import { IoSend } from "react-icons/io5";
 import { TbShare2 } from "react-icons/tb";
 import { Button } from '@/components/ui/button';
 import { io } from 'socket.io-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Producer } from "mediasoup-client/lib/types";
+import { Input } from '@/components/ui/input';
+import StudioModal from '@/components/StudioModal/StudioModal';
 
 let codec_params = {
   // mediasoup params
@@ -45,7 +48,7 @@ const Studio = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasStreamRef = useRef<MediaStream | null>(null);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
-  const height = 400;
+  const height = 300;
   const width = 700;
   const roomName = useParams().studioId;
   let rtpCapabilities:any;
@@ -65,7 +68,7 @@ const Studio = () => {
       try {
         const userMediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
-          audio: true,
+          audio: false,
         });
 
         setUserStream(userMediaStream);
@@ -458,39 +461,51 @@ const Studio = () => {
 
 
   return (
-    <div className="flex">
-      <div className="w-4/6 p-4 bg-secondary">
-        <div className="flex gap-3 justify-center">
-          <Video className="w-[250px] h-[150px] bg-black p-1 m-1" videoRef={userVideoRef} />
-          <Video className={`w-[250px] h-[150px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+    <>
+      <StudioModal/>
+      <div className="flex h-screen">
+        <div className="w-4/6 p-4 bg-secondary flex flex-col justify-evenly">
+          <div className="flex gap-3 justify-center">
+            <Video className="w-[250px] h-[150px] bg-black p-1 m-1" videoRef={userVideoRef} />
+            <Video className={`w-[250px] h-[150px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+          </div>
+          {isAdmin?
+            <canvas ref={canvasRef} width= {width} height={height} /> : <div></div> }
+          <div id="videoContainer" ref={videoContainerRef} className={`grid grid-cols-4 justify-start mt-4 ${isAdmin ? "hidden" : ""}`}></div>
+          {/*<div className="border border-lime-500 p-10"></div>*/}
+          <div className='flex items-center justify-center gap-2'>
+            <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>
+              {MIC_BUTTON_TEXT}
+            </Button>
+            <Button onClick={toggleVideo} className={`w-16 h-16 p-3 rounded-full ${videoText && ('bg-red-700 hover:bg-red-800')}`}>
+              {VIDEO_BUTTON_TEXT}
+            </Button>
+            <Button onClick={toggleScreenShare} className={`w-16 h-16 p-3 rounded-full ${isScreenSharing && ('bg-blue-500 hover:bg-blue-600')}`}>
+              {SCREEN_SHARE_BUTTON_TEXT}
+            </Button>
+          </div>
         </div>
-        {isAdmin?
-          <canvas ref={canvasRef} width= {width} height={height} /> : <div></div> }
-        <div id="videoContainer" ref={videoContainerRef} className={`grid grid-cols-4 justify-start mt-4 ${isAdmin ? "hidden" : ""}`}></div>
-        <div className="border border-lime-500 p-10"></div>
-        <div className='flex gap-2'>
-          <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>
-            {MIC_BUTTON_TEXT}
-          </Button>
-          <Button onClick={toggleVideo} className={`w-16 h-16 p-3 rounded-full ${videoText && ('bg-red-700 hover:bg-red-800')}`}>
-            {VIDEO_BUTTON_TEXT}
-          </Button>
-          <Button onClick={toggleScreenShare} className={`w-16 h-16 p-3 rounded-full ${isScreenSharing && ('bg-blue-500 hover:bg-blue-600')}`}>
-            {SCREEN_SHARE_BUTTON_TEXT}
-          </Button>
+        <div className="w-2/6 p-2 h-full">
+          <div className="flex items-center justify-center gap-2 py-4">
+            <Button onClick={handleLive}>{GO_LIVE_TEXT}</Button>
+            <Button onClick={transport}>GET TRANSPORT</Button>
+            <Button onClick={screenStop}>STOP</Button>
+          </div>
+          <div className="border flex flex-col">
+            <h3 className='text-2xl font-semibold tracking-tight p-2'>Live Chat</h3>
+            <div className='bg-slate-200 h-[500px]'>
+              <p>Chats section</p>
+            </div>
+            <div className='flex gap-2 px-3 py-4'>
+              <Input />
+              <Button>
+                <IoSend size='15' />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="w-2/6 border border-green-600 text-center">
-        <div className="flex gap-2 border border-red-600">
-          <Button onClick={handleLive}>{GO_LIVE_TEXT}</Button>
-          <Button onClick={transport}>GET TRANSPORT</Button>
-          <Button onClick={screenStop}>STOP</Button>
-        </div>
-        <div className="border border-red-600">
-          <p>Live Chat goes here</p>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

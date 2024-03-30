@@ -73,10 +73,42 @@ const WebSocket=(()=>{
       
           return items
         }
-        
+          const url = `rtmp://a.rtmp.youtube.com/live2/${process.env.TWITCH_STREAM_KEY}`;
+          const ffmpegInput = inputSettings.concat(
+            youtubeSettings(url),
+            //twitchSettings(twitch)
+            // facebookSettings(facebook),
+            // customRtmpSettings(customRTMP)
+          );
+          const ffmpeg = spawn('ffmpeg', ffmpegInput);
+
+          // If FFmpeg stops for any reason, close the WebSocket connection.
+          ffmpeg.on('close', (code, signal) => {
+            console.log('FFmpeg child process closed, code ' + code + ', signal ' + signal);
+            // ws.terminate()
+          });
+
+          // Handle STDIN pipe errors by logging to the console.
+          // These errors most commonly occur when FFmpeg closes and there is still
+          // data to write.  If left unhandled, the server will crash.
+          ffmpeg.stdin.on('error', (e) => {
+            console.log('FFmpeg STDIN Error', e);
+          });
+
+          // FFmpeg outputs all of its messages to STDERR.  Let's log them to the console.
+          ffmpeg.stderr.on('data', (data) => {
+            console.log('FFmpeg STDERR:', data.toString());
+          });
+
+          // When data comes in from the WebSocket, write it to FFmpeg's STDIN.
+          socket.on('message', (msg) => {
+            console.log('DATA', msg);
+            ffmpeg.stdin.write(msg);
+          });
         socket.on('disconnect', () => {
           console.log('peer disconnected');
-          
+          console.log('kill: SIGINT');
+          ffmpeg.kill('SIGINT');
           if (peers[socket.id]) {
             consumers = removeItems(consumers, socket.id, 'consumer');
             producers = removeItems(producers, socket.id, 'producer');
@@ -86,6 +118,7 @@ const WebSocket=(()=>{
             delete peers[socket.id];
             
             // remove socket from room
+
             if (rooms[roomName]) {
               rooms[roomName] = {
                 router: rooms[roomName].router,
@@ -110,8 +143,9 @@ const WebSocket=(()=>{
         })
         
         socket.on('joinRoom', async ({ roomName }, callback) => {
-          const router1 = await createRoom(roomName, socket.id)
+          const {router1,isAdmin} = await createRoom(roomName, socket.id)
           console.log("roomName:",roomName);
+          console.log(router1,isAdmin);
           peers[socket.id] = {
             socket,
             roomName,           // Room Name or Router Name
@@ -120,23 +154,26 @@ const WebSocket=(()=>{
             consumers: [],
             peerDetails: {
               name: '',         // Name
-              isAdmin: false,   // isAdmin?
+              isAdmin: isAdmin,   // isAdmin?
             }
           }
           const rtpCapabilities = router1.rtpCapabilities
-          callback({ rtpCapabilities })
+          callback({ rtpCapabilities , isAdmin })
         })
 
         const createRoom = async (roomName, socketId) => {
           let router1
           let peers = []
+          let isAdmin;
           //check if room there already
           if (rooms[roomName]) {
             router1 = rooms[roomName].router
             peers = rooms[roomName].peers || []
+            isAdmin = false;
           } else {
             router1 = await worker.createRouter({ mediaCodecs, })
             socket.emit('room-start',(roomName));
+            isAdmin = true;
           }
           
           console.log(`Router ID: ${router1.id}`, peers.length)
@@ -146,7 +183,7 @@ const WebSocket=(()=>{
             peers: [...peers, socketId],
           }
           
-          return router1
+          return {router1 , isAdmin}
         }
         socket.on('createWebRtcTransport', async ({ consumer }, callback) => {
           // get Room Name from Peer's properties

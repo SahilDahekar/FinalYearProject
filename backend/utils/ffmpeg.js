@@ -1,5 +1,4 @@
 const inputSettings = ['-i', '-', '-v', 'error']
-
 const twitchSettings = (twitch) => {
   if (twitch) {
     return [
@@ -38,6 +37,7 @@ const twitchSettings = (twitch) => {
       'flv',
       twitch,
     ]
+    
   } else return []
 }
 

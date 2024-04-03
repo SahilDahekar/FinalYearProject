@@ -3,7 +3,8 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
@@ -30,6 +31,7 @@ function StudioModal() {
     const name = values.name;
     try {
       // do something here
+      console.log(name);
     } catch (error) {
       console.log(error);
     }
@@ -62,9 +64,11 @@ function StudioModal() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="">
-                  Submit
-                </Button>
+                <DialogClose asChild>
+                  <Button type="submit" className="">
+                    Submit
+                  </Button>
+                </DialogClose>
               </form>
             </Form>
           </div>

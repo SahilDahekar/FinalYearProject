@@ -242,7 +242,8 @@ export default function Destination() {
             });
           });
         },
-        { scope: 'email, publish_video, public_profile', auth_type: 'rerequest' }
+        // { scope: 'email, publish_video, public_profile', auth_type: 'rerequest' }
+        { scope : 'email, public_profile' , auth_type: 'rerequest'}
       )
     }
     else {

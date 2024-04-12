@@ -12,6 +12,7 @@ import { Producer } from "mediasoup-client/lib/types";
 import { Input } from '@/components/ui/input';
 import StudioModal from '@/components/StudioModal/StudioModal';
 import api from '@/lib/api';
+import html2canvas from 'html2canvas';
 
 type ChannelType = {
   yt_title : string,
@@ -197,19 +198,7 @@ const Studio = () => {
             let currentCol = 0;
             let currentRow = 0;
 
-            // Draw the user video (if available)
-            if (userVideo) {
-                const videoWidth = 200;
-                const videoHeight = 150;
-                const userX = currentCol * cellWidth;
-                const userY = currentRow * cellHeight;
-                ctx.drawImage(userVideo, userX, userY, videoWidth, videoHeight);
-                currentCol++;
-                if (currentCol === numColumns) {
-                    currentCol = 0;
-                    currentRow++;
-                }
-            }
+
 
             // Draw the screen share video (if active)
             if (screenShareVideo) {
@@ -227,8 +216,8 @@ const Studio = () => {
 
             // Draw the other videos from the video elements
             videos?.forEach((videoElement: any) => {
-                const videoWidth = 200;
-                const videoHeight = 150;
+              const videoHeight = cellHeight;
+              const videoWidth = cellHeight * 1.33;
     
                 const x = currentCol * cellWidth;
                 const y = currentRow * cellHeight;
@@ -251,6 +240,24 @@ const Studio = () => {
       observer.disconnect();
   };
 }, [userVideoRef, isScreenSharing, screenShareVideoRef,videoContainerRef]);  
+// useEffect(() => {
+  
+//       const drawOnCanvas = async() => {
+//         const ctx = canvasRef.current?.getContext('2d');
+//         const divtorecord = document.getElementById('videoContainer');
+        
+//         const canvas = await html2canvas(divtorecord, { allowTaint: true });
+//         if (ctx) {
+//               ctx.clearRect(0, 0, 700, 200); // Clear the canvas before redrawing
+//               ctx.drawImage(canvas,0,0,700,200)
+//             }
+  
+//           requestAnimationFrame(drawOnCanvas); // Continue drawing on the canvas
+          
+//       };
+  
+//       requestAnimationFrame(drawOnCanvas); // Start drawing on the canvas
+//   }, [videoContainerRef]);  
 
   const screenStop = () =>{
     console.log("STOP");
@@ -460,7 +467,7 @@ const Studio = () => {
         newElem.setAttribute('class', 'hidden');
         newElem.innerHTML = '<audio id="' + remoteProducerId + '" autoplay></audio>';
       } else {
-        newElem.innerHTML = '<video id="' + remoteProducerId + '" autoplay class="aspect-video w-[450px] object-cover rounded-lg p-1"></video>';
+        newElem.innerHTML = '<video id="' + remoteProducerId + '" autoplay "></video>';
         newElem.querySelector('video').style.width = '450px';
         newElem.querySelector('video').classList.add('aspect-video', 'object-cover', 'rounded-lg');
       }
@@ -499,14 +506,14 @@ const Studio = () => {
             {channel.twitch_title && <p>Twitch</p>}
             {channel.fb_title && <p>Facebook</p>} */}
           </div>
-          <div id="videoContainer" className="flex flex-wrap gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
+          <div ref={videoContainerRef} id="videoContainer" className="flex gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
             {live && <div className='absolute top-4 left-4 h-[25px] w-[50px] font-bold bg-red-600 text-white tracking-wider text-sm rounded-md flex justify-center items-center animate-pulse'>LIVE</div>}
             <Video className="w-[450px] aspect-video object-cover rounded-lg" videoRef={userVideoRef} />
             <Video className={`aspect-video w-[450px] object-cover rounded-lg ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
           </div>
           {isAdmin?
             <canvas ref={canvasRef} width= {width} height={height} /> : <div></div> }
-          <div ref={videoContainerRef} className={`grid grid-cols-4 justify-start mt-4 ${isAdmin ? "hidden" : ""}`}></div>
+          {/* <div ref={videoContainerRef} className={`grid grid-cols-4 justify-start mt-4 ${isAdmin ? "hidden" : ""}`}></div> */}
           {/*<div className="border border-lime-500 p-10"></div>*/}
           <div className='flex items-center justify-center gap-2'>
             <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>

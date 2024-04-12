@@ -85,6 +85,36 @@ export const getBroadcasts = async (req, res , next) => {
     }
 }
 
+export const getBroadcastById = async (req, res, next) => {
+    try {
+        const { broadcastId } = req.params;
+
+        console.log(broadcastId);
+
+        const user = res.locals.user;
+
+        console.log(user._id.valueOf());
+        console.log(user);
+
+        const broadcast = await Broadcast.findOne({studio_id : broadcastId});
+
+        console.log(broadcast);
+
+        const result = {
+            yt_title : broadcast.yt_title,
+            yt_description : broadcast.yt_description,
+            yt_policy : broadcast.yt_privacy_policy,
+            twitch_title : broadcast.twitch_title,
+            fb_title : broadcast.fb_title,
+        }
+
+        return res.status(200).json(result);
+
+    } catch (error) {
+        return res.status(404).json({ message: "error", cause: error.message });
+    }
+}
+
 export const removeBroadcast = async (req, res , next) => {
     try {
         const { broadcast_id } = req.body;

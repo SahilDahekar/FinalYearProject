@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Video from '@/components/Video/Video';
 import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa6";
@@ -11,6 +11,15 @@ import * as mediasoupClient from 'mediasoup-client';
 import { Producer } from "mediasoup-client/lib/types";
 import { Input } from '@/components/ui/input';
 import StudioModal from '@/components/StudioModal/StudioModal';
+import api from '@/lib/api';
+
+type ChannelType = {
+  yt_title : string,
+  yt_description? : string,
+  yt_policy? : string,
+  twitch_title : string,
+  fb_title : string,
+};
 
 let codec_params = {
   // mediasoup params
@@ -31,11 +40,14 @@ let isAdminReceived:any;
 let currentRow = 0;
 let currentCol = 0;
 const Studio = () => {
+  const { studioId } = useParams();
+  console.log(studioId);
   const screenShareVideoRef = useRef<HTMLVideoElement | null>(null);
   const [screenShareStream, setScreenShareStream] = useState<MediaStream | null>(null);
   const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
   const [videoText , setVideoText] = useState<boolean>(false);
   const [micText, setMicText] = useState<boolean>(false);
+  const [channel, setChannel] = useState<ChannelType>(null);
   const VIDEO_BUTTON_TEXT : JSX.Element = videoText ? <FaVideoSlash size='23'/> : <FaVideo size='20'/>;
   const MIC_BUTTON_TEXT : JSX.Element = micText ? <FaMicrophoneSlash size='24'/> : <FaMicrophone size='20'/>;
   const SCREEN_SHARE_BUTTON_TEXT : JSX.Element = <TbShare2 size='25'/>;
@@ -62,13 +74,28 @@ const Studio = () => {
   //     }),
   //   []
   // );
+
+  const getBroadcast = useCallback(async () => {
+    try {
+      const response = await api.get(`/broadcast/${studioId}`);
+      const data = response.data;
+      console.log(data);
+      setChannel(data);
+    } catch (error) {
+      console.error('Error fetching broadcasts:', error);
+    }
+  });
+  
+  useEffect(() => {
+    getBroadcast();
+  }, [studioId])
   
   useEffect(() => {
     const startUserMediaStream = async () => {
       try {
         const userMediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
-          audio: false,
+          audio: true,
         });
 
         setUserStream(userMediaStream);
@@ -433,7 +460,7 @@ const Studio = () => {
         newElem.setAttribute('class', 'hidden');
         newElem.innerHTML = '<audio id="' + remoteProducerId + '" autoplay></audio>';
       } else {
-        newElem.innerHTML = '<video id="' + remoteProducerId + '" autoplay class="w-[250px] h-[150px] bg-black p-1 m-1"></video>';
+        newElem.innerHTML = '<video id="' + remoteProducerId + '" autoplay class="aspect-video w-[450px] object-cover rounded-lg p-1"></video>';
       }
       videoContainer.appendChild(newElem);
       
@@ -464,10 +491,16 @@ const Studio = () => {
     <>
       <StudioModal/>
       <div className="flex h-screen">
-        <div className="w-4/6 p-4 bg-secondary flex flex-col justify-evenly">
-          <div className="flex gap-3 justify-center">
-            <Video className="w-[250px] h-[150px] bg-black p-1 m-1" videoRef={userVideoRef} />
-            <Video className={`w-[250px] h-[150px] ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+        <div className="w-4/6 p-4 bg-secondary flex flex-col">
+          <div className='flex gap-2'>
+            {/* {channel.yt_title && <p>Youtube</p>}
+            {channel.twitch_title && <p>Twitch</p>}
+            {channel.fb_title && <p>Facebook</p>} */}
+          </div>
+          <div className="flex gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
+            {live && <div className='absolute top-4 left-4 h-[25px] w-[50px] font-bold bg-red-600 text-white tracking-wider text-sm rounded-md flex justify-center items-center animate-pulse'>LIVE</div>}
+            <Video className="w-[450px] aspect-video object-cover rounded-lg" videoRef={userVideoRef} />
+            <Video className={`aspect-video w-[450px] object-cover rounded-lg ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
           </div>
           {isAdmin?
             <canvas ref={canvasRef} width= {width} height={height} /> : <div></div> }
@@ -493,7 +526,7 @@ const Studio = () => {
           </div>
           <div className="border flex flex-col">
             <h3 className='text-2xl font-semibold tracking-tight p-2'>Live Chat</h3>
-            <div className='bg-slate-200 h-[500px]'>
+            <div className='bg-slate-200 h-[530px]'>
               <p>Chats section</p>
             </div>
             <div className='flex gap-2 px-3 py-4'>

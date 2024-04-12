@@ -11,17 +11,17 @@ export default defineConfig({
     },
   },
   // While adding https remember to change key and cert parameter paths under server -> https to path of your certificate and key.
-  // server: {
-  //   https: {
-  //     key: '/home/sahil/server.key',
-  //     cert: '/home/sahil/server.crt',
-  //   },
-  //   proxy: {
-  //     '/backend': {
-  //       target: 'http://localhost:8000',
-  //       changeOrigin: true,
-  //       rewrite: (path) => path.replace(/^\/backend/, '/api'),
-  //     },
-  //   },
-  // },
+  server: {
+    https: {
+      key: '/home/sahil/server.key',
+      cert: '/home/sahil/server.crt',
+    },
+    proxy: {
+      '/backend': {
+        target: 'https://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/backend/, '/api'),
+      },
+    },
+  },
 })

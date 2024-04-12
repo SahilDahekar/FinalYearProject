@@ -499,7 +499,7 @@ const Studio = () => {
             {channel.twitch_title && <p>Twitch</p>}
             {channel.fb_title && <p>Facebook</p>} */}
           </div>
-          <div id="videoContainer" className="flex gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
+          <div id="videoContainer" className="flex flex-wrap gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
             {live && <div className='absolute top-4 left-4 h-[25px] w-[50px] font-bold bg-red-600 text-white tracking-wider text-sm rounded-md flex justify-center items-center animate-pulse'>LIVE</div>}
             <Video className="w-[450px] aspect-video object-cover rounded-lg" videoRef={userVideoRef} />
             <Video className={`aspect-video w-[450px] object-cover rounded-lg ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />

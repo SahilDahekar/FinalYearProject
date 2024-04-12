@@ -164,100 +164,100 @@ const Studio = () => {
     }
   };
 
-  useEffect(() => {
-    const observerCallback = () => {
-      console.log('Element added to videoContainer');
-      // Call the drawOnCanvas function here
-      requestAnimationFrame(drawOnCanvas);
-  };
+//   useEffect(() => {
+//     const observerCallback = () => {
+//       console.log('Element added to videoContainer');
+//       // Call the drawOnCanvas function here
+//       requestAnimationFrame(drawOnCanvas);
+//     };
 
-  // Create a new MutationObserver instance
-    const observer = new MutationObserver(observerCallback);
+//   // Create a new MutationObserver instance
+//     const observer = new MutationObserver(observerCallback);
 
-  // Start observing changes to the videoContainer
-    observer.observe(videoContainerRef.current, { childList: true });
-    const drawOnCanvas = () => {
-      const ctx = canvasRef.current?.getContext('2d');
-      const videos = videoContainerRef.current?.querySelectorAll('video');
-      const userVideo = userVideoRef.current;
-      const screenShareVideo = isScreenSharing && screenShareVideoRef.current;
+//   // Start observing changes to the videoContainer
+//     observer.observe(videoContainerRef.current, { childList: true });
+//     const drawOnCanvas = () => {
+//       const ctx = canvasRef.current?.getContext('2d');
+//       const videos = videoContainerRef.current?.querySelectorAll('video');
+//       const userVideo = userVideoRef.current;
+//       const screenShareVideo = isScreenSharing && screenShareVideoRef.current;
       
-      if (ctx) {
+//       if (ctx) {
         
-            ctx.fillStyle = 'red';
-            ctx.clearRect(0, 0, width, height); // Clear the canvas before redrawing
-            // Define the number of columns and rows for the 3x3 grid
-            const numColumns = 3;
-            const numRows = 3;
+//             ctx.fillStyle = 'red';
+//             ctx.clearRect(0, 0, width, height); // Clear the canvas before redrawing
+//             // Define the number of columns and rows for the 3x3 grid
+//             const numColumns = 2;
+//             const numRows = 2;
 
-            // Calculate the width and height of each cell in the grid
-            const cellWidth = width / numColumns;
-            const cellHeight = height / numRows;
+//             // Calculate the width and height of each cell in the grid
+//             const cellWidth = width / numColumns;
+//             const cellHeight = height / numRows;
 
-            // Initialize variables to keep track of the current cell position
-            let currentCol = 0;
-            let currentRow = 0;
+//             // Initialize variables to keep track of the current cell position
+//             let currentCol = 0;
+//             let currentRow = 0;
 
 
 
-            // Draw the screen share video (if active)
-            if (screenShareVideo) {
-                const { videoWidth, videoHeight } = screenShareVideo;
-                const screenScale = Math.min(cellWidth / videoWidth, cellHeight / videoHeight);
-                const screenX = currentCol * cellWidth;
-                const screenY = currentRow * cellHeight;
-                ctx.drawImage(screenShareVideo, screenX, screenY, videoWidth * screenScale, videoHeight * screenScale);
-                currentCol++;
-                if (currentCol === numColumns) {
-                    currentCol = 0;
-                    currentRow++;
-                }
-            }
-
-            // Draw the other videos from the video elements
-            videos?.forEach((videoElement: any) => {
-              const videoHeight = cellHeight;
-              const videoWidth = cellHeight * 1.33;
-    
-                const x = currentCol * cellWidth;
-                const y = currentRow * cellHeight;
-                ctx.drawImage(videoElement, x, y, videoWidth, videoHeight);
-
-                currentCol++;
-                if (currentCol === numColumns) {
-                    currentCol = 0;
-                    currentRow++;
-                }
-            });
-        }
-
-        requestAnimationFrame(drawOnCanvas); // Continue drawing on the canvas
-        
-    };
-
-    requestAnimationFrame(drawOnCanvas); // Start drawing on the canvas
-    return () => {
-      observer.disconnect();
-  };
-}, [userVideoRef, isScreenSharing, screenShareVideoRef,videoContainerRef]);  
-// useEffect(() => {
-  
-//       const drawOnCanvas = async() => {
-//         const ctx = canvasRef.current?.getContext('2d');
-//         const divtorecord = document.getElementById('videoContainer');
-        
-//         const canvas = await html2canvas(divtorecord, { allowTaint: true });
-//         if (ctx) {
-//               ctx.clearRect(0, 0, 700, 200); // Clear the canvas before redrawing
-//               ctx.drawImage(canvas,0,0,700,200)
+//             // Draw the screen share video (if active)
+//             if (screenShareVideo) {
+//                 const { videoWidth, videoHeight } = screenShareVideo;
+//                 const screenScale = Math.min(cellWidth / videoWidth, cellHeight / videoHeight);
+//                 const screenX = currentCol * cellWidth;
+//                 const screenY = currentRow * cellHeight;
+//                 ctx.drawImage(screenShareVideo, screenX, screenY, videoWidth * screenScale, videoHeight * screenScale);
+//                 currentCol++;
+//                 if (currentCol === numColumns) {
+//                     currentCol = 0;
+//                     currentRow++;
+//                 }
 //             }
+
+//             // Draw the other videos from the video elements
+//             videos?.forEach((videoElement: any) => {
+//               const videoHeight = cellHeight;
+//               const videoWidth = cellHeight * 1.33;
+    
+//                 const x = currentCol * cellWidth;
+//                 const y = currentRow * cellHeight;
+//                 ctx.drawImage(videoElement, x, y, videoWidth, videoHeight);
+
+//                 currentCol++;
+//                 if (currentCol === numColumns) {
+//                     currentCol = 0;
+//                     currentRow++;
+//                 }
+//             });
+//         }
+
+//         requestAnimationFrame(drawOnCanvas); // Continue drawing on the canvas
+        
+//     };
+
+//     requestAnimationFrame(drawOnCanvas); // Start drawing on the canvas
+//     return () => {
+//       observer.disconnect();
+//   };
+// }, [userVideoRef, isScreenSharing, screenShareVideoRef,videoContainerRef]);  
+useEffect(() => {
   
-//           requestAnimationFrame(drawOnCanvas); // Continue drawing on the canvas
+      const drawOnCanvas = async() => {
+        const ctx = canvasRef.current?.getContext('2d');
+        const divtorecord = document.getElementById('videoContainer');
+        
+        const canvas = await html2canvas(divtorecord, { allowTaint: true });
+        if (ctx) {
+              ctx.clearRect(0, 0, 700, 200); // Clear the canvas before redrawing
+              ctx.drawImage(canvas,0,0,700,200)
+            }
+  
+          requestAnimationFrame(drawOnCanvas); // Continue drawing on the canvas
           
-//       };
+      };
   
-//       requestAnimationFrame(drawOnCanvas); // Start drawing on the canvas
-//   }, [videoContainerRef]);  
+      requestAnimationFrame(drawOnCanvas); // Start drawing on the canvas
+  }, [videoContainerRef]);  
 
   const screenStop = () =>{
     console.log("STOP");
@@ -506,10 +506,12 @@ const Studio = () => {
             {channel.twitch_title && <p>Twitch</p>}
             {channel.fb_title && <p>Facebook</p>} */}
           </div>
-          <div ref={videoContainerRef} id="videoContainer" className="flex gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
+          <div className='relative'>
             {live && <div className='absolute top-4 left-4 h-[25px] w-[50px] font-bold bg-red-600 text-white tracking-wider text-sm rounded-md flex justify-center items-center animate-pulse'>LIVE</div>}
-            <Video className="w-[450px] aspect-video object-cover rounded-lg" videoRef={userVideoRef} />
-            <Video className={`aspect-video w-[450px] object-cover rounded-lg ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+            <div ref={videoContainerRef} id="videoContainer" className="flex flex-wrap gap-3 py-6 justify-center border-2 rounded-md bg-black">
+              <Video className="w-[450px] aspect-video object-cover rounded-lg" videoRef={userVideoRef} />
+              <Video className={`aspect-video w-[450px] rounded-lg ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+            </div>
           </div>
           {isAdmin?
             <canvas ref={canvasRef} width= {width} height={height} /> : <div></div> }

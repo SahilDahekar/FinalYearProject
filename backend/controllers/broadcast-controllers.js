@@ -1,12 +1,29 @@
 import { Broadcast, Destination } from "../models/schema.js";
-import { nanoid } from 'nanoid';
-import axios from 'axios';
+import { nanoid } from "nanoid";
+import axios from "axios";
+import {
+    createYoutubeBroadcast,
+    bindYoutubeBroadcast,
+    createYoutubeStream,
+} from '../controllers/youtube-controllers.js'
 
-export const setBroadcastDetails = async(req, res, next) => {
+export const setBroadcastDetails = async (req, res, next) => {
     try {
-        const { yt_title, yt_description, yt_policy, twitch_title, fb_title } = req.body;
+        const { yt_title, yt_description, yt_policy, twitch_title, fb_title } =
+            req.body;
 
-        console.log("\nYt title : ", yt_title,"\nYt description : ", yt_description,"\nYt Policy : ", yt_policy,"\n\nTwitch title : ", twitch_title,"\n\nFb title : ", fb_title);
+        console.log(
+            "\nYt title : ",
+            yt_title,
+            "\nYt description : ",
+            yt_description,
+            "\nYt Policy : ",
+            yt_policy,
+            "\n\nTwitch title : ",
+            twitch_title,
+            "\n\nFb title : ",
+            fb_title
+        );
 
         const user = res.locals.user;
 
@@ -15,21 +32,27 @@ export const setBroadcastDetails = async(req, res, next) => {
 
         let twitch_stream_key = null;
 
-        if(twitch_title){
-            const des = await Destination.findOne({ user_id : user._id.valueOf() });
-    
+        if (twitch_title) {
+            const des = await Destination.findOne({
+                user_id: user._id.valueOf(),
+            });
+
             const token = des.twitch_access_token;
-    
+
             console.log("Twitch access token : ", token);
 
             const validate = await validateTwitchRequest(token);
 
-            console.log("Validation data : " ,validate);
+            console.log("Validation data : ", validate);
 
-            const result = await getTwitchStreamKey(token, validate.client_id, validate.user_id);
+            const result = await getTwitchStreamKey(
+                token,
+                validate.client_id,
+                validate.user_id
+            );
             twitch_stream_key = result.twitchStreamKey;
         }
-        
+
         const studioId = nanoid();
 
         const details = {
@@ -39,51 +62,53 @@ export const setBroadcastDetails = async(req, res, next) => {
             fb_title: fb_title ? fb_title : null,
             twitch_title: twitch_title ? twitch_title : null,
             twitch_stream_key: twitch_stream_key ? twitch_stream_key : null,
-            studio_id : studioId,
-        }
+            studio_id: studioId,
+        };
 
         console.log(details);
         console.log(user._id);
-        const broadcast = await addBroadcastDetails(user._id.valueOf(), details);
-        console.log(" This is random studio Id : ",studioId);
+        const broadcast = await addBroadcastDetails(
+            user._id.valueOf(),
+            details
+        );
+        console.log(" This is random studio Id : ", studioId);
 
         return res.status(200).json(broadcast);
-
     } catch (error) {
         return res.status(404).json({ message: "error", cause: error.message });
     }
-}
+};
 
-export const getBroadcasts = async (req, res , next) => {
+export const getBroadcasts = async (req, res, next) => {
     try {
-
         const user = res.locals.user;
 
         console.log(user._id.valueOf());
         console.log(user);
 
-        const broadcasts = await Broadcast.find({user_id : user._id.valueOf()});
+        const broadcasts = await Broadcast.find({
+            user_id: user._id.valueOf(),
+        });
 
         console.log(broadcasts);
 
         const result = broadcasts.map((item) => {
             return {
-                id : item._id.valueOf(),
-                yt_title : item.yt_title,
-                yt_description : item.yt_description,
-                yt_policy : item.yt_privacy_policy,
-                twitch_title : item.twitch_title,
-                fb_title : item.fb_title,
-                studio_id : item.studio_id,
-            }
-        })
+                id: item._id.valueOf(),
+                yt_title: item.yt_title,
+                yt_description: item.yt_description,
+                yt_policy: item.yt_privacy_policy,
+                twitch_title: item.twitch_title,
+                fb_title: item.fb_title,
+                studio_id: item.studio_id,
+            };
+        });
 
         return res.status(200).json(result);
-
     } catch (error) {
         return res.status(404).json({ message: "error", cause: error.message });
     }
-}
+};
 
 export const getBroadcastById = async (req, res, next) => {
     try {
@@ -115,7 +140,7 @@ export const getBroadcastById = async (req, res, next) => {
     }
 }
 
-export const removeBroadcast = async (req, res , next) => {
+export const removeBroadcast = async (req, res, next) => {
     try {
         const { broadcast_id } = req.body;
 
@@ -127,17 +152,16 @@ export const removeBroadcast = async (req, res , next) => {
         deleteBroadcast(user._id.valueOf(), broadcast_id);
 
         res.status(200).json({
-            message: "success"
+            message: "success",
         });
-
     } catch (error) {
-        return res.status(404).json({ message: "error", cause:error.message });
+        return res.status(404).json({ message: "error", cause: error.message });
     }
-}
+};
 
 export const startBroadcast = async (req, res, next) => {
     try {
-        // Write Logic to start broadcast based on broadcast id and selected platforms
+        //can fetch youtube access token from db
         const { broadcast_id } = req.body;
 
         const user = res.locals.user;
@@ -145,7 +169,10 @@ export const startBroadcast = async (req, res, next) => {
         console.log(user._id.valueOf());
         console.log(user);
 
-        const broadcast = await Broadcast.findOne(user._id.valueOf(), broadcast_id);
+        const broadcast = await Broadcast.findOne(
+            user._id.valueOf(),
+            broadcast_id
+        );
 
         const result = await Promise.all([
             broadcastToYoutube(),
@@ -156,34 +183,63 @@ export const startBroadcast = async (req, res, next) => {
         res.status(200).json({
             message: "You are live now!!",
             broadcast: broadcast,
-            result: result
-
-        })
+            result: result,
+        });
     } catch (error) {
-        res.status(404).json({ message: "error", cause: error.message});
+        res.status(404).json({ message: "error", cause: error.message });
     }
-}
+};
 
-const broadcastToYoutube = async () => {
-    // Write logic related to broadcasting to Youtube
-}
+export const broadcastToYoutube = async (req, res) => {
 
-const broadcastToTwitch = async () => {
-    // Write logic related to broadcasting to Twitch
-}
+    const user = res.locals.user;
+    const userId = user._id;
+    const {
+        youtubeBroadcastTitle,
+        youtubeBroadcastDescription,
+        youtubePrivacyPolicy,
+        youtubeAccessToken,
+    } = req.body;
 
-const broadcastToFacebook = async () => {
-    // Write logic related to broadcasting to Facebook
-}
+    const youtubeBroadcastId = await createYoutubeBroadcast(
+        userId,
+        youtubeBroadcastTitle,
+        youtubeBroadcastDescription,
+        youtubePrivacyPolicy,
+        youtubeAccessToken
+    );
+
+    let youtubeStream = await createYoutubeStream(
+        userId,
+        youtubeBroadcastTitle,
+        youtubeBroadcastDescription,
+        youtubeAccessToken
+    );
+
+    await bindYoutubeBroadcast(
+        userId,
+        youtubeBroadcastId,
+        youtubeStream.id,
+        youtubeAccessToken
+    );
+
+    return res.status(200).send({
+        youtubeDestinationUrl: youtubeStream.youtubeDestinationUrl,
+        youtubeBroadcastId: youtubeBroadcastId,
+        youtubeStreamId: youtubeStream.id,
+    });
+};
 
 const validateTwitchRequest = async (token) => {
     try {
-        
         const config = {
             headers: { Authorization: `Bearer ${token}` },
-        }
+        };
 
-        const response = await axios.get('https://id.twitch.tv/oauth2/validate', config)
+        const response = await axios.get(
+            "https://id.twitch.tv/oauth2/validate",
+            config
+        );
         // .then((res) => {
         //     console.log(res.data);
         //     return res.data;
@@ -196,38 +252,58 @@ const validateTwitchRequest = async (token) => {
         console.log(response.data);
 
         return response.data;
-
     } catch (error) {
-        return { message: "error in validate", cause: error.message};
+        return { message: "error in validate", cause: error.message };
     }
-}
-  
-const getTwitchStreamKey = async (twitchAccessToken, twitchClientId, twitchBroadcasterId) => {
+};
+
+const getTwitchStreamKey = async (
+    twitchAccessToken,
+    twitchClientId,
+    twitchBroadcasterId
+) => {
     try {
-        
         const config = {
             headers: {
                 Authorization: `Bearer ${twitchAccessToken}`,
-                'Client-Id': twitchClientId,
+                "Client-Id": twitchClientId,
             },
-        }
-    
+        };
+
         const response = await axios.get(
             `https://api.twitch.tv/helix/streams/key?broadcaster_id=${twitchBroadcasterId}`,
             config
-        )
+        );
 
         console.log(response.data);
-    
+
         const twitchStreamKey = response.data.data[0].stream_key;
         return {
             twitchStreamKey: twitchStreamKey,
         };
-
     } catch (error) {
-        return { message: "error in streamKey", cause: error.message};
+        return { message: "error in streamKey", cause: error.message };
     }
-}
+};
+
+export const getTwitchUserName = async (req, res) => {
+    const user = res.locals.user;
+    const destination = await Destination.findOne({ user_id: user._id });
+    try {
+        const response = await axios.get("https://api.twitch.tv/helix/users", {
+            headers: {
+                "Client-ID": "YOUR_TWITCH_CLIENT_ID",
+                Authorization: `Bearer ${destination.twitch_access_token}`,
+            },
+        });
+
+        const username = response.data.data[0].login;
+
+         return username
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch username" });
+    }
+};
 
 export const updateBroadcastDetails = async (userId, detailsObj) => {
     const filter = { user_id: userId };
@@ -236,27 +312,31 @@ export const updateBroadcastDetails = async (userId, detailsObj) => {
 
     const broadcast = await Broadcast.findOneAndUpdate(filter, update, options);
 
-    console.log('Broadcast:\n', broadcast);
+    console.log("Broadcast:\n", broadcast);
     return broadcast;
-}
+};
 
 export const addBroadcastDetails = async (userId, detailsObj) => {
-
     detailsObj.user_id = userId;
 
     const broadcast = await Broadcast.create(detailsObj);
 
-    console.log('Broadcast:\n', broadcast);
+    console.log("Broadcast:\n", broadcast);
     return broadcast;
-}
+};
 
 export const deleteBroadcast = async (userId, broadcastId) => {
-
-    const broadcast = await Broadcast.deleteOne({ user_id : userId, _id : broadcastId });
+    const broadcast = await Broadcast.deleteOne({
+        user_id: userId,
+        _id: broadcastId,
+    });
     return broadcast;
-}
+};
 
 export const findBroadcast = async (userId, broadcastId) => {
-    const broadcast = await Broadcast.findOne({ user_id : userId, _id : broadcastId });
+    const broadcast = await Broadcast.findOne({
+        user_id: userId,
+        _id: broadcastId,
+    });
     return broadcast;
-}
+};

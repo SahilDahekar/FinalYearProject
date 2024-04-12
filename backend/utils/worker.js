@@ -1,11 +1,5 @@
 import * as mediasoup from 'mediasoup';
 import config  from './soup_config.js';
-//import {Worker , Router} from "mediasoup/node/lib/types";
-
-// const worker : Array <{
-//     worker:Worker
-//     router:Router
-// }>=[];
 let worker;
 
 

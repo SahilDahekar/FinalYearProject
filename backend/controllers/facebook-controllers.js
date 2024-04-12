@@ -36,4 +36,27 @@ export const endFacebookBroadcast = async (params) => {
             error : error
         }
     }
+
+}
+
+export const FacebookViewCount = async()=>{
+
+    //can fetch facebook access token from db 
+    //can create api for live video id using access token 
+    const facebookLiveVideoId = req.body.facebookLiveVideoId
+    const facebookAccessToken = req.body.facebookAccessToken
+  
+    let viewCount = await axios
+      .get(
+        `https://graph.facebook.com/v13.0/${facebookLiveVideoId}?fields=live_views&access_token=${facebookAccessToken}`
+      )
+      .then((res) => {
+        console.log(res.data.live_views)
+        return res.data.live_views
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  
+    return res.status(201).send({ views: viewCount })
 }

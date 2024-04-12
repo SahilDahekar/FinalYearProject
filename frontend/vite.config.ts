@@ -13,8 +13,8 @@ export default defineConfig({
   // While adding https remember to change key and cert parameter paths under server -> https to path of your certificate and key.
   server: {
     https: {
-      key: '/home/prathamesh-v-kirad/Working_Directory/FinalYearProject/certs/server.key',
-      cert: '/home/prathamesh-v-kirad/Working_Directory/FinalYearProject/certs/server.crt',
+      key: '../certs/server.key',
+      cert: '../certs/server.crt',
     },
     proxy: {
       '/backend': {

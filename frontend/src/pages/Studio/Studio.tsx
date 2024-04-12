@@ -461,6 +461,8 @@ const Studio = () => {
         newElem.innerHTML = '<audio id="' + remoteProducerId + '" autoplay></audio>';
       } else {
         newElem.innerHTML = '<video id="' + remoteProducerId + '" autoplay class="aspect-video w-[450px] object-cover rounded-lg p-1"></video>';
+        newElem.querySelector('video').style.width = '450px';
+        newElem.querySelector('video').classList.add('aspect-video', 'object-cover', 'rounded-lg');
       }
       videoContainer.appendChild(newElem);
       
@@ -497,14 +499,14 @@ const Studio = () => {
             {channel.twitch_title && <p>Twitch</p>}
             {channel.fb_title && <p>Facebook</p>} */}
           </div>
-          <div className="flex gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
+          <div id="videoContainer" className="flex gap-3 py-6 justify-center relative border-2 rounded-md bg-black">
             {live && <div className='absolute top-4 left-4 h-[25px] w-[50px] font-bold bg-red-600 text-white tracking-wider text-sm rounded-md flex justify-center items-center animate-pulse'>LIVE</div>}
             <Video className="w-[450px] aspect-video object-cover rounded-lg" videoRef={userVideoRef} />
             <Video className={`aspect-video w-[450px] object-cover rounded-lg ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
           </div>
           {isAdmin?
             <canvas ref={canvasRef} width= {width} height={height} /> : <div></div> }
-          <div id="videoContainer" ref={videoContainerRef} className={`grid grid-cols-4 justify-start mt-4 ${isAdmin ? "hidden" : ""}`}></div>
+          <div ref={videoContainerRef} className={`grid grid-cols-4 justify-start mt-4 ${isAdmin ? "hidden" : ""}`}></div>
           {/*<div className="border border-lime-500 p-10"></div>*/}
           <div className='flex items-center justify-center gap-2'>
             <Button onClick={toggleAudio} className={`w-16 h-16 p-3 rounded-full ${micText && ('bg-red-700 hover:bg-red-800')}`}>

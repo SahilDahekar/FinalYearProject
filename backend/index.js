@@ -13,8 +13,8 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 
 console.log(__dirname + '/');
 
-const key = fs.readFileSync(__dirname + '/certs/server.key');
-const cert = fs.readFileSync(__dirname + '/certs/server.crt');
+const key = fs.readFileSync(__dirname + '/../certs/server.key');
+const cert = fs.readFileSync(__dirname + '/../certs/server.crt');
 const options = {
   key: key,
   cert: cert

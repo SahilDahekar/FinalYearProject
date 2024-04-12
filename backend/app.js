@@ -10,7 +10,7 @@ const app = express();
 // Configure CORS to allow only requests from port 5173
 // Change URL to https://localhost:5173 if using https
 const corsOptions = {
-    origin: 'http://localhost:5173',  // Replace with your specific origin
+    origin: 'https://localhost:5173',  // Replace with your specific origin
     credentials : true,
     optionsSuccessStatus: 200,
 };
@@ -24,5 +24,9 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(morgan('dev'));
 
 app.use('/api', appRouter);
+
+app.get('/', (req, res) => {
+    res.send('Now using https..');
+});
 
 export default app

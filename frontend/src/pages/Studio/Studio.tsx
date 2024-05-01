@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useParams } from 'react-router-dom';
 import Video from '@/components/Video/Video';
 import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa6";
-import { IoSend } from "react-icons/io5";
+import { IoSend, IoMenu, IoClose } from "react-icons/io5";
 import { TbShare2 } from "react-icons/tb";
 import { Button } from '@/components/ui/button';
 import { io } from 'socket.io-client';
@@ -46,12 +46,14 @@ const Studio = () => {
   const screenShareVideoRef = useRef<HTMLVideoElement | null>(null);
   const [screenShareStream, setScreenShareStream] = useState<MediaStream | null>(null);
   const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
+  const [menu, setMenu] = useState<boolean>(false);
   const [videoText , setVideoText] = useState<boolean>(false);
   const [micText, setMicText] = useState<boolean>(false);
   const [channel, setChannel] = useState<ChannelType>(null);
   const VIDEO_BUTTON_TEXT : JSX.Element = videoText ? <FaVideoSlash size='23'/> : <FaVideo size='20'/>;
   const MIC_BUTTON_TEXT : JSX.Element = micText ? <FaMicrophoneSlash size='24'/> : <FaMicrophone size='20'/>;
   const SCREEN_SHARE_BUTTON_TEXT : JSX.Element = <TbShare2 size='25'/>;
+  const MENU_ICON : JSX.Element = menu ? <IoClose size='15' /> : <IoMenu size='15' />;
   //
   const userVideoRef = useRef<HTMLVideoElement | null>(null);
   const [userStream, setUserStream] = useState<MediaStream | null>(null);
@@ -118,6 +120,10 @@ const Studio = () => {
       }
     };
   }, []); 
+
+  const toggleMenu = () => {
+    setMenu(prev => !prev);
+  }
 
   const toggleVideo = () => {
     if (userStream) {
@@ -508,8 +514,8 @@ useEffect(() => {
   return (
     <>
       <StudioModal/>
-      <div className="flex h-screen">
-        <div className="w-4/6 p-4 bg-secondary flex flex-col">
+      <div className="relative flex flex-col xl:flex-row h-screen">
+        <div className="xl:w-4/6 p-4 bg-secondary flex flex-col">
           <div className='flex gap-2'>
             {/* {(channel.yt_title != null) && <p>Youtube</p>}
             {(channel.twitch_title != null) && <p>Twitch</p>}
@@ -539,7 +545,7 @@ useEffect(() => {
             </Button>
           </div>
         </div>
-        <div className="w-2/6 p-2 h-full">
+        <div className={`absolute right-0 top-0 xl:relative xl:w-2/6 xl:translate-x-0 p-2 h-full bg-white ${menu ? "translate-x-0" : "translate-x-full" }`}>
           <div className="flex items-center justify-center gap-2 py-4">
             <Button onClick={handleLive}>{GO_LIVE_TEXT}</Button>
             <Button onClick={transport}>GET TRANSPORT</Button>
@@ -558,6 +564,11 @@ useEffect(() => {
             </div>
           </div>
         </div>
+      </div>
+      <div className='absolute xl:hidden top-5 left-5'>
+            <Button variant="outline" className='rounded-full w-10 h-10 p-0' onClick={toggleMenu}>
+              {MENU_ICON}
+            </Button>
       </div>
     </>
   );

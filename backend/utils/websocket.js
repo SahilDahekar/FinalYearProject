@@ -74,9 +74,13 @@ const WebSocket=(()=>{
           return items
         }
           const url = `rtmp://a.rtmp.youtube.com/live2/${process.env.YOUTUBE_STREAM_KEY}`;
+          const twitch = `rtmp://live.twitch.tv/app/${process.env.TWITCH_STREAM_KEY}`;
+
+          console.log(url);
+          console.log(twitch);
           const ffmpegInput = inputSettings.concat(
             youtubeSettings(url),
-            //twitchSettings(twitch)
+            twitchSettings(twitch)
             // facebookSettings(facebook),
             // customRtmpSettings(customRTMP)
           );

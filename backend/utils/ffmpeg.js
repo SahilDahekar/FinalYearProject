@@ -31,8 +31,8 @@ const twitchSettings = (twitch) => {
 
       //'-filter_complex', 'aresample=44100', // resample audio to 44100Hz, needed if input is not 44100
       //'-strict', 'experimental',
-    '-bufsize',
-      '1000',
+    // '-bufsize',
+    //   '1000',
       '-f',
       'flv',
       twitch,
@@ -42,7 +42,7 @@ const twitchSettings = (twitch) => {
 }
 
 const youtubeSettings = (youtube) => {
-  if (youtube && youtube !== 'undefined') {
+  if (youtube) {
     return [
       // video codec config: low latency, adaptive bitrate
       '-c:v',

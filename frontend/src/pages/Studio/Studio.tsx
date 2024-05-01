@@ -248,11 +248,20 @@ useEffect(() => {
         
         const canvas = await html2canvas(divtorecord, { allowTaint: true });
         if (ctx) {
-              ctx.clearRect(0, 0, 700, 200); // Clear the canvas before redrawing
-              ctx.drawImage(canvas,0,0,700,200)
-            }
+          const containerWidth = divtorecord.clientWidth;
+          const containerHeight = divtorecord.clientHeight;
+        
+          // Calculate the scale to maintain aspect ratio
+          const scale = Math.min(width / containerWidth, height / containerHeight);
+        
+          // Clear the canvas before redrawing
+          ctx.clearRect(0, 0, width, height);
+        
+          // Draw the captured content with scaling
+          ctx.drawImage(canvas, 0, 0, containerWidth * scale, containerHeight * scale);
+        }
   
-          requestAnimationFrame(drawOnCanvas); // Continue drawing on the canvas
+        requestAnimationFrame(drawOnCanvas); // Continue drawing on the canvas
           
       };
   
@@ -502,15 +511,16 @@ useEffect(() => {
       <div className="flex h-screen">
         <div className="w-4/6 p-4 bg-secondary flex flex-col">
           <div className='flex gap-2'>
-            {/* {channel.yt_title && <p>Youtube</p>}
-            {channel.twitch_title && <p>Twitch</p>}
-            {channel.fb_title && <p>Facebook</p>} */}
+            {/* {(channel.yt_title != null) && <p>Youtube</p>}
+            {(channel.twitch_title != null) && <p>Twitch</p>}
+            {(channel.fb_title != null) && <p>Facebook</p>} */}
           </div>
           <div className='relative'>
             {live && <div className='absolute top-4 left-4 h-[25px] w-[50px] font-bold bg-red-600 text-white tracking-wider text-sm rounded-md flex justify-center items-center animate-pulse'>LIVE</div>}
-            <div ref={videoContainerRef} id="videoContainer" className="flex flex-wrap gap-3 py-6 justify-center border-2 rounded-md bg-black">
+            <div ref={videoContainerRef} id="videoContainer" className="flex flex-wrap gap-3 py-6 justify-center border-2 rounded-md bg-slate-200 relative">
               <Video className="w-[450px] aspect-video object-cover rounded-lg" videoRef={userVideoRef} />
               <Video className={`aspect-video w-[450px] rounded-lg ${!isScreenSharing ? "hidden" : ""}`} videoRef={screenShareVideoRef} />
+              <div className='absolute top-4 right-4 w-[50px] h-[50px] object-cover rounded-full'><img className='w-full h-full' src="/StreamSync.png" alt="StreamSync logo" /></div>
             </div>
           </div>
           {isAdmin?
